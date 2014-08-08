@@ -1,4 +1,4 @@
-namespace MiniLisp
+namespace MiniLisp.Exceptions
 {
     public class LispProcedureArityMismatchException : LispEvaluationException
     {

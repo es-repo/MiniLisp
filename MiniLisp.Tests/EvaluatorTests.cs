@@ -1,4 +1,5 @@
 ﻿using MbUnit.Framework;
+using MiniLisp.Exceptions;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp.Tests
@@ -49,13 +50,19 @@ namespace MiniLisp.Tests
         }
 
         [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
-        public void TestUnboundIdentifier()
+        public void TestUnboundIdentifierInEval()
         {
             _evaluator.Eval(new LispExpression(
                 new LispEval())
                 {
                     new LispExpression(new LispIdentifier("$#F#@F")), new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
                 });
+        }
+
+        [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
+        public void TestUnboundIdentifier()
+        {
+            _evaluator.Eval(new LispExpression(new LispIdentifier("$#F#@F")));
         }
 
         [Test, ExpectedException(typeof (LispProcedureExpectedException))]
@@ -66,6 +73,21 @@ namespace MiniLisp.Tests
                 {
                     new LispExpression(new LispIdentifier("pi")), new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
                 });
+        }
+
+        [Test]
+        public void TestEvalDefine()
+        {
+            LispObject evalResult = _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine()),
+                new LispExpression(new LispIdentifier("d")),
+                new LispExpression(new LispNumber(5)),
+            });
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = _evaluator.Eval(new LispExpression(new LispIdentifier("d")));
+            Assert.AreEqual(new LispNumber(5), evalResult);
         }
     }
 }

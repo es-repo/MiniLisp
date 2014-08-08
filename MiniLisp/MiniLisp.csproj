@@ -40,8 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultDefenitions.cs" />
+    <Compile Include="DefenitionsCollection.cs" />
     <Compile Include="Evaluator.cs" />
-    <Compile Include="LispEvaluationException.cs" />
+    <Compile Include="Exceptions\LispEvaluationException.cs" />
+    <Compile Include="Exceptions\LispMultipleExpressionsException.cs" />
     <Compile Include="LispException.cs" />
     <Compile Include="LispExpression.cs" />
     <Compile Include="LispObject.cs" />
@@ -58,10 +60,11 @@
     <Compile Include="LispObjects\LispIdentifier.cs" />
     <Compile Include="LispObjects\LispString.cs" />
     <Compile Include="LispProcedureArgumentTypes.cs" />
-    <Compile Include="LispProcedureArityMismatchException.cs" />
+    <Compile Include="Exceptions\LispProcedureArityMismatchException.cs" />
     <Compile Include="LispProcedureContractVerification.cs" />
-    <Compile Include="LispProcedureContractViolationException.cs" />
-    <Compile Include="LispProcedureExpectedException.cs" />
+    <Compile Include="Exceptions\LispProcedureContractViolationException.cs" />
+    <Compile Include="Exceptions\LispIdentifierExpectedException.cs" />
+    <Compile Include="Exceptions\LispProcedureExpectedException.cs" />
     <Compile Include="LispUnboundIdentifierException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using MiniLisp.Exceptions;
 using MiniLisp.LispObjects;
 using MiniLisp.Trees;
 
@@ -8,11 +8,12 @@ namespace MiniLisp
 {
     public class Evaluator
     {
-        private readonly IDictionary<string, LispObject> _defenitions;
+        private readonly DefenitionsCollection _defenitions;
 
         public Evaluator()
         {
-            _defenitions = new Dictionary<string, LispObject>(new DefaultDefenitions());
+            _defenitions = new DefenitionsCollection();
+            new DefaultDefenitions().Fill(_defenitions);
         }
 
         public LispObject Eval(LispExpression expression)
@@ -30,18 +31,17 @@ namespace MiniLisp
 
                         if (firstObj is LispDefine)
                         {
-                            // TODO:
-                            return new LispVoid();
+                            return EvalDefine(objects);
                         }
                         
                         if (!(firstObj is LispIdentifier))
                             throw new LispProcedureExpectedException(firstObj);
 
                         LispIdentifier identifier = (LispIdentifier) firstObj;
-                        if (!_defenitions.ContainsKey((identifier.Value)))
+                        if (!_defenitions.Contains(identifier))
                             throw new LispUnboundIdentifierException(identifier);
 
-                        LispObject definedObject = _defenitions[identifier.Value];
+                        LispObject definedObject = _defenitions[identifier];
                         if (!(definedObject is LispProcedure))
                             throw new LispProcedureExpectedException(definedObject);
 
@@ -52,10 +52,32 @@ namespace MiniLisp
                     }
                     
                     if (objects != null && objects.Length > 0)
-                            throw new InvalidOperationException("Expected no arguments.");
-                    
+                        throw new InvalidOperationException("Expected no arguments.");
+
+                    if (lispObject is LispIdentifier)
+                    {
+                        LispIdentifier identifier = (LispIdentifier) lispObject;
+                        if (!_defenitions.Contains(identifier))
+                            throw new LispUnboundIdentifierException(identifier);
+                        lispObject = _defenitions[identifier];
+                    }
+
                     return lispObject;
                 });
+        }
+
+        private LispObject EvalDefine(LispObject[] objects)
+        {
+            if (objects.Length == 1 || !(objects[1] is LispIdentifier))
+                throw new LispIdentifierExpectedException(objects.Length == 1 ? null : objects[1]);
+
+            LispIdentifier identifier = (LispIdentifier)objects[1];
+
+            if (objects.Length > 3)
+                throw new LispMultipleExpressionsException(identifier);
+
+            _defenitions.Add(identifier, objects[2]);
+            return new LispVoid();
         }
     }
 }

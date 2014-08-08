@@ -1,35 +1,29 @@
-using System.Collections.Generic;
 using System.Linq;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp
 {
-    public class DefaultDefenitions : Dictionary<string, LispObject>
+    public class DefaultDefenitions
     {
-        public DefaultDefenitions()
+        public void Fill(DefenitionsCollection defenitionsCollection)
         {
-            Add(new LispProcedure(
-                new LispProcedureSignature("+", new LispProcedureArgumentTypes(typeof(LispNumber))), 
+            defenitionsCollection.Add("+", new LispProcedure(
+                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber))), 
                 Sum));
 
-            Add(new LispProcedure(
-                new LispProcedureSignature("-", new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
+            defenitionsCollection.Add("-", new LispProcedure(
+                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
                 Sub));
 
-            Add(new LispProcedure(
-                new LispProcedureSignature("*", new LispProcedureArgumentTypes(typeof(LispNumber))),
+            defenitionsCollection.Add("*", new LispProcedure(
+                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber))),
                 Mul));
 
-            Add(new LispProcedure(
-                new LispProcedureSignature("/", new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
+            defenitionsCollection.Add("/", new LispProcedure(
+                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
                 Div));
 
-            Add("pi", new LispNumber(3.141592653589793));
-        }
-
-        private void Add(LispProcedure procedure)
-        {
-            Add(procedure.Signature.Identifier, procedure);
+            defenitionsCollection.Add("pi", new LispNumber(3.141592653589793));
         }
 
         private LispObject Sum(LispObject[] arguments)

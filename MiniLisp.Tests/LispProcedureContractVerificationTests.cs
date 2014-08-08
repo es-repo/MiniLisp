@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MbUnit.Framework;
+using MiniLisp.Exceptions;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp.Tests

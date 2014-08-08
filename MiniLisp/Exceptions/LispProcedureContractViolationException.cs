@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MiniLisp
+namespace MiniLisp.Exceptions
 {
     public class LispProcedureContractViolationException : LispEvaluationException
     {

@@ -1,4 +1,5 @@
-﻿using MiniLisp.LispObjects;
+﻿using MiniLisp.Exceptions;
+using MiniLisp.LispObjects;
 
 namespace MiniLisp
 {
