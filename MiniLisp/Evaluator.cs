@@ -27,6 +27,12 @@ namespace MiniLisp
                             throw new LispProcedureExpectedException();
 
                         LispObject firstObj = objects[0];
+
+                        if (firstObj is LispDefine)
+                        {
+                            // TODO:
+                            return new LispVoid();
+                        }
                         
                         if (!(firstObj is LispIdentifier))
                             throw new LispProcedureExpectedException(firstObj);
@@ -40,22 +46,15 @@ namespace MiniLisp
                             throw new LispProcedureExpectedException(definedObject);
 
                         LispProcedure procedure = (LispProcedure) definedObject;
-                        LispObject[] args = objects.Skip(1).ToArray();
+                        LispObject[] args = objects.Skip(1).Where(o => !(o is LispVoid)).ToArray();
                         LispProcedureContractVerification.Assert(procedure.Signature, args);
                         return procedure.Value(args);
                     }
-                    else if (lispObject is LispDefine)
-                    {
-                        // TODO:
-                        return new LispVoid();
-                    }
-                    else
-                    {
-                        if (objects != null && objects.Length > 0)
+                    
+                    if (objects != null && objects.Length > 0)
                             throw new InvalidOperationException("Expected no arguments.");
-
-                        return lispObject;
-                    }
+                    
+                    return lispObject;
                 });
         }
     }
