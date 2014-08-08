@@ -4,16 +4,22 @@ namespace MiniLisp.LispObjects
 {
     public class LispProcedure : LispObject
     {
-        public string Identifier { get; private set; }
+        public LispProcedureSignature Signature { get; set; }
 
-        public LispProcedure(string identifier, Func<LispObject[], LispObject> value) : base(value)
+        public new Func<LispObject[], LispObject> Value 
         {
-            Identifier = identifier;
+            get { return (Func<LispObject[], LispObject>) base.Value; }
+        }
+
+        public LispProcedure(LispProcedureSignature signature, Func<LispObject[], LispObject> value)
+            : base(value)
+        {
+            Signature = signature;
         }
 
         public override string ToString()
         {
-            return string.Format("#<{0}:{1}>", TypeToString(GetType()), Identifier);
+            return string.Format("#<{0}:{1}>", TypeToString(GetType()), Signature.Identifier);
         }
     }
 }

@@ -7,8 +7,7 @@
     <ProjectGuid>{B3CD1910-2FFB-4084-844A-F9E2D6D86E3C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace>MiniLisp.Tests</RootNamespace>
     <AssemblyName>MiniLisp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,8 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LispExpressionTests.cs" />
-    <Compile Include="LispProcedureContractTests.cs" />
+    <Compile Include="EvaluatorTests.cs" />
+    <Compile Include="LispProcedureContractVerificationTests.cs" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
