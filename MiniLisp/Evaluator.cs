@@ -30,17 +30,12 @@ namespace MiniLisp
                         LispObject firstObj = objects[0];
 
                         if (firstObj is LispDefine)
-                        {
                             return EvalDefine(objects);
-                        }
                         
                         if (!(firstObj is LispProcedure))
                             throw new LispProcedureExpectedException(firstObj);
 
-                        LispProcedure procedure = (LispProcedure)firstObj;
-                        LispObject[] args = objects.Skip(1).Where(o => !(o is LispVoid)).ToArray();
-                        LispProcedureContractVerification.Assert(procedure.Signature, args);
-                        return procedure.Value(args);
+                        return EvalProcedure(objects);
                     }
                     
                     if (objects != null && objects.Length > 0)
@@ -60,6 +55,14 @@ namespace MiniLisp
 
                     return lispObject;
                 });
+        }
+
+        private LispObject EvalProcedure(LispObject[] objects)
+        {
+            LispProcedure procedure = (LispProcedure)objects[0];
+            LispObject[] args = objects.Skip(1).Where(o => !(o is LispVoid)).ToArray();
+            LispProcedureContractVerification.Assert(procedure.Signature, args);
+            return procedure.Value(args);
         }
 
         private LispObject EvalDefine(LispObject[] objects)
