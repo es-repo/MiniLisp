@@ -18,18 +18,13 @@ namespace MiniLisp.Tests
             Assert.AreEqual("+", proc.Signature.Identifier);
 
             defenitions.Add("d", new LispNumber(5));
-            defenitions.Add("e", new LispIdentifier("d"));
-
+            
             LispNumber d = defenitions["d"] as LispNumber;
             Assert.IsNotNull(d);
             Assert.AreEqual(5, d.Value);
-
-            LispNumber e = defenitions["e"] as LispNumber;
-            Assert.IsNotNull(e);
-            Assert.AreEqual(5, e.Value);
         }
 
-        [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
+        [Test, ExpectedException(typeof(ArgumentException))]
         public void TestAddFailed()
         {
             DefenitionsCollection defenitions = new DefenitionsCollection();

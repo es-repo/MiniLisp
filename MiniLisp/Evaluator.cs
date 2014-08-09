@@ -34,18 +34,10 @@ namespace MiniLisp
                             return EvalDefine(objects);
                         }
                         
-                        if (!(firstObj is LispIdentifier))
+                        if (!(firstObj is LispProcedure))
                             throw new LispProcedureExpectedException(firstObj);
 
-                        LispIdentifier identifier = (LispIdentifier) firstObj;
-                        if (!_defenitions.Contains(identifier))
-                            throw new LispUnboundIdentifierException(identifier);
-
-                        LispObject definedObject = _defenitions[identifier];
-                        if (!(definedObject is LispProcedure))
-                            throw new LispProcedureExpectedException(definedObject);
-
-                        LispProcedure procedure = (LispProcedure) definedObject;
+                        LispProcedure procedure = (LispProcedure)firstObj;
                         LispObject[] args = objects.Skip(1).Where(o => !(o is LispVoid)).ToArray();
                         LispProcedureContractVerification.Assert(procedure.Signature, args);
                         return procedure.Value(args);
@@ -56,10 +48,14 @@ namespace MiniLisp
 
                     if (lispObject is LispIdentifier)
                     {
-                        LispIdentifier identifier = (LispIdentifier) lispObject;
-                        if (!_defenitions.Contains(identifier))
-                            throw new LispUnboundIdentifierException(identifier);
-                        lispObject = _defenitions[identifier];
+                        bool identiferRightAfterDefine = expr.IndexAmongSiblings == 1 && expr.ParentNode.Children[0].Value is LispDefine;
+                        if (!identiferRightAfterDefine)
+                        {
+                            LispIdentifier identifier = (LispIdentifier) lispObject;
+                            if (!_defenitions.Contains(identifier))
+                                throw new LispUnboundIdentifierException(identifier);
+                            lispObject = _defenitions[identifier];
+                        }
                     }
 
                     return lispObject;

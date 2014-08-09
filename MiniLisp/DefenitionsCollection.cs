@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp
@@ -40,14 +41,9 @@ namespace MiniLisp
         public void Add(string identifier, LispObject lispObject)
         {
             if (lispObject is LispIdentifier)
-            {
-                LispIdentifier anotherIdentifier = (LispIdentifier)lispObject;
-                if (!Contains(anotherIdentifier))
-                    throw new LispUnboundIdentifierException(anotherIdentifier);
+                throw new ArgumentException("Object can't be Lisp idetifier.", "lispObject");
 
-                lispObject = this[anotherIdentifier];
-            }
-            else if (lispObject is LispProcedure)
+            if (lispObject is LispProcedure)
             {
                 LispProcedure procedure = (LispProcedure) lispObject;
                 procedure.Signature.Identifier = identifier;
