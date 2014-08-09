@@ -9,7 +9,7 @@ namespace MiniLisp.LispObjects
 
         public override string ToString()
         {
-            return "'expression"; // TODO: convert expression to real s-expression
+            return "'" + Value;
         }
     }
 }

@@ -71,6 +71,44 @@ namespace MiniLisp.Trees
             }
         }
 
+        public static IEnumerable<TreeNodeInfo<T>> TraverseDepthFirstPreOrder(TreeNode<T> root)
+        {
+            TreeNodeInfo<T> rootNodeInfo = new TreeNodeInfo<T>(root, null, 0, 0);
+            Stack<TreeNodeInfo<T>> stack = new Stack<TreeNodeInfo<T>>(new[] { rootNodeInfo });
+            while (stack.Count > 0)
+            {
+                TreeNodeInfo<T> nodeInfo = stack.Pop();
+                yield return nodeInfo;
+
+                int indexAmongSiblings = nodeInfo.Node.Children.Count - 1;
+                foreach (TreeNode<T> n in nodeInfo.Node.Children.Reverse())
+                {
+                    TreeNodeInfo<T> childNodeInfo = new TreeNodeInfo<T>(n, nodeInfo.Node, indexAmongSiblings, nodeInfo.Depth + 1);
+                    stack.Push(childNodeInfo);
+                    indexAmongSiblings--;
+                }
+            }
+        }
+
+        public static IEnumerable<TreeNodeInfo<T>> TraverseBredthFirstPreOrder(TreeNode<T> root)
+        {
+            TreeNodeInfo<T> rootNodeInfo = new TreeNodeInfo<T>(root, null, 0, 0);
+            Queue<TreeNodeInfo<T>> queue = new Queue<TreeNodeInfo<T>>(new[] { rootNodeInfo });
+            while (queue.Count > 0)
+            {
+                TreeNodeInfo<T> nodeInfo = queue.Dequeue();
+                yield return nodeInfo;
+
+                int indexAmongSiblings = 0;
+                foreach (TreeNode<T> n in nodeInfo.Node.Children)
+                {
+                    TreeNodeInfo<T> childNodeInfo = new TreeNodeInfo<T>(n, nodeInfo.Node, indexAmongSiblings, nodeInfo.Depth + 1);
+                    queue.Enqueue(childNodeInfo);
+                    indexAmongSiblings++;
+                }
+            }
+        }
+
         #endregion
 
         public R Fold<R>(Func<TreeNodeInfo<T>, R[], R> func)
@@ -101,6 +139,30 @@ namespace MiniLisp.Trees
             }
 
             return foldedChildrenQueue.Pop();
+        }
+
+        public static bool Equal(TreeNode<T> rootA, TreeNode<T> rootB, Func<T, T, bool> nodeValuesEqual)
+        {
+            if (rootA == null && rootB == null)
+                return true;
+
+            IEnumerable<TreeNodeInfo<T>> traversedNodesA = TraverseBredthFirstPreOrder(rootA);
+            IEnumerable<TreeNodeInfo<T>> traversedNodesB = TraverseBredthFirstPreOrder(rootB);
+            IEnumerator<TreeNodeInfo<T>> nodesInfoBEnumerator = traversedNodesB.GetEnumerator();
+            foreach (var nodeInfoA in traversedNodesA)
+            {
+                nodesInfoBEnumerator.MoveNext();
+                var nodeInfoB = nodesInfoBEnumerator.Current;
+                if (nodeInfoB == null || !nodeValuesEqual(nodeInfoA.Node.Value, nodeInfoA.Node.Value))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool Equal(TreeNode<T> rootA, TreeNode<T> rootB)
+        {
+            return Equal(rootA, rootB, (va, vb) => va.Equals(vb));
         }
     }
 }

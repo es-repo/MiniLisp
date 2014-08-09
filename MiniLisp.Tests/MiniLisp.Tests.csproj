@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="DefenitionsCollectionTests.cs" />
     <Compile Include="EvaluatorTests.cs" />
+    <Compile Include="LispObjectsTests.cs" />
     <Compile Include="LispProcedureContractVerificationTests.cs" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
