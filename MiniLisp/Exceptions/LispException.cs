@@ -1,6 +1,6 @@
 using System;
 
-namespace MiniLisp
+namespace MiniLisp.Exceptions
 {
     public abstract class LispException : Exception
     {

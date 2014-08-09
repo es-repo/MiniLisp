@@ -1,7 +1,6 @@
-﻿using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+﻿using MiniLisp.LispObjects;
 
-namespace MiniLisp
+namespace MiniLisp.Exceptions
 {
     public class LispUnboundIdentifierException : LispEvaluationException
     {
