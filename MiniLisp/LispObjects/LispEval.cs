@@ -2,9 +2,5 @@
 {
     public class LispEval : LispObject
     {
-        public LispEval()
-            : base(null)
-        {
-        }
     }
 }

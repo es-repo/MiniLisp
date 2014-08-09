@@ -1,6 +1,6 @@
 namespace MiniLisp.LispObjects
 {
-    public class LispNumber : LispObject
+    public class LispNumber : LispValue
     {
         public new double Value 
         {

@@ -2,7 +2,7 @@
 
 namespace MiniLisp.LispObjects
 {
-    public class LispPair : LispObject
+    public class LispPair : LispValue
     {
         public new KeyValuePair<LispObject, LispObject> Value 
         {

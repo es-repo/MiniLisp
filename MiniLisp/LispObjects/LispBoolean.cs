@@ -1,6 +1,6 @@
 namespace MiniLisp.LispObjects
 {
-    public class LispBoolean : LispObject
+    public class LispBoolean : LispValue
     {
         public LispBoolean(bool value)
             : base(value)

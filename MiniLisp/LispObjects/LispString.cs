@@ -1,6 +1,6 @@
 namespace MiniLisp.LispObjects
 {
-    public class LispString : LispObject
+    public class LispString : LispValue
     {
         public LispString(string value) : base(value)
         {

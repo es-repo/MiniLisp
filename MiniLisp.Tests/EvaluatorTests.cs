@@ -66,7 +66,7 @@ namespace MiniLisp.Tests
             _evaluator.Eval(new LispExpression(new LispIdentifier("$#F#@F")));
         }
 
-        [Test, ExpectedException(typeof (LispProcedureExpectedException))]
+        [Test, ExpectedException(typeof(LispProcedureExpectedException))]
         public void TestIdentifierIsNotProcedure()
         {
             _evaluator.Eval(new LispExpression(
@@ -145,6 +145,17 @@ namespace MiniLisp.Tests
                 new LispExpression(new LispIdentifier("d")),
                 new LispExpression(new LispNumber(5)),
                 new LispExpression(new LispNumber(5))
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispValueExpectedException))]
+        public void TestEvalDefineWithNonValue()
+        {
+            _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine()),
+                new LispExpression(new LispIdentifier("d")),
+                new LispExpression(new LispDefine())
             });
         }
     }

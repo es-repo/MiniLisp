@@ -1,6 +1,6 @@
 ﻿namespace MiniLisp.LispObjects
 {
-    public class LispNil : LispObject
+    public class LispNil : LispValue
     {
         public LispNil() : base(null)
         {

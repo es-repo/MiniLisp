@@ -26,12 +26,12 @@ namespace MiniLisp
             defenitionsCollection.Add("pi", new LispNumber(3.141592653589793));
         }
 
-        private LispObject Sum(LispObject[] arguments)
+        private LispValue Sum(LispValue[] arguments)
         {
             return new LispNumber(arguments.Cast<LispNumber>().Sum(o => o.Value));
         }
 
-        private LispObject Sub(LispObject[] arguments)
+        private LispValue Sub(LispValue[] arguments)
         {
             LispNumber firstArg = (LispNumber) arguments[0];
             if (arguments.Length == 1)
@@ -40,12 +40,12 @@ namespace MiniLisp
             return new LispNumber(firstArg.Value - arguments.Skip(1).Cast<LispNumber>().Sum(o => o.Value));
         }
 
-        private LispObject Mul(LispObject[] arguments)
+        private LispValue Mul(LispValue[] arguments)
         {
             return new LispNumber(arguments.Select(o => ((LispNumber) o).Value).Aggregate(1.0, (n1, n2) => n1*n2));
         }
 
-        private LispObject Div(LispObject[] arguments)
+        private LispValue Div(LispValue[] arguments)
         {
             double first = ((LispNumber) arguments[0]).Value;
             return new LispNumber(arguments.Skip(1).Select(o => ((LispNumber)o).Value).Aggregate(first, (n1, n2) => n1 / n2));

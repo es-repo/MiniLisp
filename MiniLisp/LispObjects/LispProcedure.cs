@@ -2,16 +2,16 @@ using System;
 
 namespace MiniLisp.LispObjects
 {
-    public class LispProcedure : LispObject
+    public class LispProcedure : LispValue
     {
         public LispProcedureSignature Signature { get; set; }
 
-        public new Func<LispObject[], LispObject> Value 
+        public new Func<LispValue[], LispValue> Value 
         {
-            get { return (Func<LispObject[], LispObject>) base.Value; }
+            get { return (Func<LispValue[], LispValue>)base.Value; }
         }
 
-        public LispProcedure(LispProcedureSignature signature, Func<LispObject[], LispObject> value)
+        public LispProcedure(LispProcedureSignature signature, Func<LispValue[], LispValue> value)
             : base(value)
         {
             Signature = signature;

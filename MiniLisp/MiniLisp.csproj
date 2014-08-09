@@ -45,11 +45,13 @@
     <Compile Include="Exceptions\LispEvaluationException.cs" />
     <Compile Include="Exceptions\LispMultipleExpressionsException.cs" />
     <Compile Include="Exceptions\LispException.cs" />
+    <Compile Include="Exceptions\LispProcedureExpectedException.cs" />
     <Compile Include="LispExpression.cs" />
     <Compile Include="LispObject.cs" />
     <Compile Include="LispObjects\LispDefine.cs" />
     <Compile Include="LispObjects\LispEval.cs" />
     <Compile Include="LispObjects\LispProcedureSignature.cs" />
+    <Compile Include="LispObjects\LispValue.cs" />
     <Compile Include="LispObjects\LispVoid.cs" />
     <Compile Include="LispObjects\LispNil.cs" />
     <Compile Include="LispObjects\LispBoolean.cs" />
@@ -64,7 +66,7 @@
     <Compile Include="LispProcedureContractVerification.cs" />
     <Compile Include="Exceptions\LispProcedureContractViolationException.cs" />
     <Compile Include="Exceptions\LispIdentifierExpectedException.cs" />
-    <Compile Include="Exceptions\LispProcedureExpectedException.cs" />
+    <Compile Include="Exceptions\LispValueExpectedException.cs" />
     <Compile Include="Exceptions\LispUnboundIdentifierException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

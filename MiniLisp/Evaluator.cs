@@ -52,20 +52,20 @@ namespace MiniLisp
                             lispObject = _defenitions[identifier];
                         }
                     }
-
+                    
                     return lispObject;
                 });
         }
 
-        private LispObject EvalProcedure(LispObject[] objects)
+        private LispValue EvalProcedure(LispObject[] objects)
         {
             LispProcedure procedure = (LispProcedure)objects[0];
-            LispObject[] args = objects.Skip(1).Where(o => !(o is LispVoid)).ToArray();
+            LispValue[] args = objects.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
         }
 
-        private LispObject EvalDefine(LispObject[] objects)
+        private LispVoid EvalDefine(LispObject[] objects)
         {
             if (objects.Length == 1 || !(objects[1] is LispIdentifier))
                 throw new LispIdentifierExpectedException(objects.Length == 1 ? null : objects[1]);
@@ -75,7 +75,11 @@ namespace MiniLisp
             if (objects.Length > 3)
                 throw new LispMultipleExpressionsException(identifier);
 
-            _defenitions.Add(identifier, objects[2]);
+            LispObject value = objects[2];
+            if (!(value is LispValue))
+                throw new LispValueExpectedException(value);
+
+            _defenitions.Add(identifier, (LispValue)value);
             return new LispVoid();
         }
     }

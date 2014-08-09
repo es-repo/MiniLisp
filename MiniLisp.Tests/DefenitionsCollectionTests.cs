@@ -1,5 +1,4 @@
-﻿using System;
-using MbUnit.Framework;
+﻿using MbUnit.Framework;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp.Tests
@@ -22,13 +21,6 @@ namespace MiniLisp.Tests
             LispNumber d = defenitions["d"] as LispNumber;
             Assert.IsNotNull(d);
             Assert.AreEqual(5, d.Value);
-        }
-
-        [Test, ExpectedException(typeof(ArgumentException))]
-        public void TestAddFailed()
-        {
-            DefenitionsCollection defenitions = new DefenitionsCollection();
-            defenitions.Add("a", new LispIdentifier("b"));
         }
     }
 }

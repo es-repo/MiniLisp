@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp
 {
     public class DefenitionsCollection
     {
-        private readonly IDictionary<string, LispObject> _defenitions;
+        private readonly IDictionary<string, LispValue> _defenitions;
 
         public DefenitionsCollection()
         {
-            _defenitions = new Dictionary<string, LispObject>();
+            _defenitions = new Dictionary<string, LispValue>();
         }
 
         public bool Contains(LispIdentifier identifier)
@@ -33,16 +32,13 @@ namespace MiniLisp
             get { return Contains(identifier) ? _defenitions[identifier] : null; }
         }
 
-        public void Add(LispIdentifier identifier, LispObject lispObject)
+        public void Add(LispIdentifier identifier, LispValue lispObject)
         {
             Add(identifier.Value, lispObject);
         }
 
-        public void Add(string identifier, LispObject lispObject)
+        public void Add(string identifier, LispValue lispObject)
         {
-            if (lispObject is LispIdentifier)
-                throw new ArgumentException("Object can't be Lisp idetifier.", "lispObject");
-
             if (lispObject is LispProcedure)
             {
                 LispProcedure procedure = (LispProcedure) lispObject;
