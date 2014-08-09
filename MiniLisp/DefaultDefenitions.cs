@@ -33,7 +33,11 @@ namespace MiniLisp
 
         private LispObject Sub(LispObject[] arguments)
         {
-           return new LispNumber(((LispNumber) arguments[0]).Value - arguments.Skip(1).Cast<LispNumber>().Sum(o => o.Value));
+            LispNumber firstArg = (LispNumber) arguments[0];
+            if (arguments.Length == 1)
+                return new LispNumber(-firstArg.Value);
+
+            return new LispNumber(firstArg.Value - arguments.Skip(1).Cast<LispNumber>().Sum(o => o.Value));
         }
 
         private LispObject Mul(LispObject[] arguments)

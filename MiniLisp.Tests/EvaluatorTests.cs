@@ -1,4 +1,5 @@
-﻿using MbUnit.Framework;
+﻿using System;
+using MbUnit.Framework;
 using MiniLisp.Exceptions;
 using MiniLisp.LispObjects;
 
@@ -88,6 +89,63 @@ namespace MiniLisp.Tests
 
             evalResult = _evaluator.Eval(new LispExpression(new LispIdentifier("d")));
             Assert.AreEqual(new LispNumber(5), evalResult);
+
+            _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine()),
+                new LispExpression(new LispIdentifier("e")),
+                new LispExpression(new LispIdentifier("d")),
+            });
+
+            evalResult = _evaluator.Eval(new LispExpression(new LispIdentifier("e")));
+            Assert.AreEqual(new LispNumber(5), evalResult);
+
+            _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine()),
+                new LispExpression(new LispIdentifier("sqrt")),
+                new LispExpression(new LispProcedure(
+                    new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1), 
+                    args => new LispNumber(Math.Sqrt((((LispNumber)args[0]).Value)))))
+            });
+
+            evalResult = _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispIdentifier("sqrt")),
+                new LispExpression(new LispNumber(9))
+            });
+            Assert.AreEqual(new LispNumber(3), evalResult);
+        }
+
+        [Test, ExpectedException(typeof(LispIdentifierExpectedException))]
+        public void TestEvalDefineWithoutArgs()
+        {
+            _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine())
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispIdentifierExpectedException))]
+        public void TestEvalDefineWithoutIdentidier()
+        {
+            _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine()),
+                new LispExpression(new LispNumber(5))
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispMultipleExpressionsException))]
+        public void TestEvalDefineWithMultipleExpressions()
+        {
+            _evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispDefine()),
+                new LispExpression(new LispIdentifier("d")),
+                new LispExpression(new LispNumber(5)),
+                new LispExpression(new LispNumber(5))
+            });
         }
     }
 }
