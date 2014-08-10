@@ -42,6 +42,7 @@
     <Compile Include="DefaultDefenitions.cs" />
     <Compile Include="DefenitionsCollection.cs" />
     <Compile Include="Evaluator.cs" />
+    <Compile Include="Exceptions\LispParsingException.cs" />
     <Compile Include="Exceptions\LispEvaluationException.cs" />
     <Compile Include="Exceptions\LispMultipleExpressionsException.cs" />
     <Compile Include="Exceptions\LispException.cs" />

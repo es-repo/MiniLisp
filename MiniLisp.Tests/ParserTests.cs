@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using MbUnit.Framework;
+using MiniLisp.Exceptions;
 
 namespace MiniLisp.Tests
 {
@@ -25,7 +26,21 @@ namespace MiniLisp.Tests
         [Row("(+ 3 2)", "(+ 3 2)")]
         [Row("(+ 3 (* 2 5))", "(+ 3 (* 2 5))")]
         [Row("(+ 3 (* (-  2)(+ 5)))", "(+ 3 (* (- 2) (+ 5)))")]
+        [Row("'1", "'1")]
+        [Row("''''5", "''''5")]
+        [Row("'''(+ 2 (* '''(* 3 5) '4))", "'''(+ 2 (* '''(* 3 5) '4))")]
+        [Row("'(+ '\"a b''' fd\")", "'(+ '\"a b''' fd\")")]
         [Row("(define d 5) (+ d d) (define str \"hello world!\")", "(define d 5) (+ d d) (define str \"hello world!\")")]
+        [Row("(", "", ExpectedException = typeof(LispParsingException))]
+        [Row("((())", "", ExpectedException = typeof(LispParsingException))]
+        [Row("(define sqr3 (* 3 3) ", "", ExpectedException = typeof(LispParsingException))]
+        [Row("(define sqr3 '(* 3 '(3) )", "", ExpectedException = typeof(LispParsingException))]
+        [Row(")", "", ExpectedException = typeof(LispParsingException))]
+        [Row("(+ 2 3))", "", ExpectedException = typeof(LispParsingException))]
+        [Row("'(+ 2 3))", "", ExpectedException = typeof(LispParsingException))]
+        [Row("'", "", ExpectedException = typeof(LispParsingException))]
+        [Row("''''", "", ExpectedException = typeof(LispParsingException))]
+        [Row("'''(+ 2 3)'", "", ExpectedException = typeof(LispParsingException))]
         public void TestParse(string input, string expectedOutput)
         {
             LispExpression[] expressions = Parser.Parse(input).ToArray();

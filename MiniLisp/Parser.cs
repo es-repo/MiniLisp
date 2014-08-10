@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MiniLisp.Exceptions;
 using MiniLisp.LispObjects;
 
 namespace MiniLisp
@@ -9,38 +10,62 @@ namespace MiniLisp
     {
         private static readonly Regex _tokenizeRegex = new Regex(@"(""[^""]*"")|([^\s^\(^\)^'^""]+)|\(|\)|'", RegexOptions.Compiled);
 
-        public static IEnumerable<string> Tokenize(string code)
+        public static string[] Tokenize(string code)
         {
             MatchCollection matches = _tokenizeRegex.Matches(code);
-            return matches.Cast<Match>().Select(m => m.Value);
+            return matches.Cast<Match>().Select(m => m.Value).ToArray();
         }
 
         public static IEnumerable<LispExpression> Parse(string code)
         {
-            IEnumerable<string> tokens = Tokenize(code);
-            
-            Stack<LispExpression> stack = new Stack<LispExpression>();
-            foreach (string t in tokens)
+            string[] tokens = Tokenize(code);
+            if (tokens.Length == 0)
+                yield break;
+
+            int start = 0;
+            while (start < tokens.Length)
             {
-                LispObject lispObject = null;
+                int end = GetExpressionEnd(tokens, start);
+                yield return ParseSingleExpression(tokens, start, end);
+                start = end;
+            }
+        }
+
+        private static LispExpression ParseSingleExpression(string[] tokens, int start, int end)
+        {
+            Stack<LispExpression> stack = new Stack<LispExpression>();
+            for (int i = start; i < end; i++)
+            {
+                LispObject lispObject;
                 bool boolValue;
                 string stringValue;
                 double numberValue;
-                
+                string t = tokens[i];
+
                 if (t == "(")
                 {
                     lispObject = new LispEval();
                 }
                 else if (t == ")")
                 {
-                    // TODO: throw parser excpetion if ")" is not expected
+                    if (stack.Count == 0)
+                        throw new LispParsingException("Unexpected \")\"");
+
                     LispExpression expression = stack.Pop();
                     if (stack.Count == 0)
-                        yield return expression;
+                        return expression;
+
                     continue;
                 }
                 else if (t == "'")
                 {
+                    int exprObjEnd = GetExpressionEnd(tokens, i + 1);
+                    if (exprObjEnd == i + 1)
+                        throw new LispParsingException("Expected an element for quoting \"'\".");
+
+                    LispExpression expression = ParseSingleExpression(tokens, i + 1, exprObjEnd);
+                    lispObject = new LispExpressionObject(expression);
+                    i = exprObjEnd - 1;
                 }
                 else if (t == "define")
                 {
@@ -68,26 +93,49 @@ namespace MiniLisp
                 }
 
                 LispExpression childExpression = new LispExpression(lispObject);
-                
+
                 if (stack.Count > 0)
                 {
                     stack.Peek().Children.Add(childExpression);
                 }
-                
+
                 if (lispObject is LispEval)
                 {
                     stack.Push(childExpression);
                 }
-                
+
                 if (stack.Count == 0)
                 {
-                    yield return childExpression;
+                    return childExpression;
                 }
             }
 
-            // TODO: throw parser excpetion if expression is not finished.
+            throw new LispParsingException("Expected a \")\" to close \"(\".");
+        }
 
-            yield break;
+        private static int GetExpressionEnd(string[] tokens, int start)
+        {
+            int i = start;
+            while (i < tokens.Length && tokens[i] == "'")
+                i++;
+
+            if (i == tokens.Length)
+                return i;
+
+            if (tokens[i] != "(")
+                return i + 1;
+
+            i++;
+            int depth = 1;
+            while (i < tokens.Length && depth > 0)
+            {
+                if (tokens[i] == "(")
+                    depth++;
+                else if (tokens[i] == ")")
+                    depth--;
+                i++;
+            }
+            return i;
         }
 
         private static bool IsNumber(string token, out double value)
