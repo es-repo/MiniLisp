@@ -64,6 +64,13 @@ namespace MiniLisp.Tests
                     }
                 }
             }).ToString());
+
+            Assert.AreEqual("''(+ 2 3)", new LispExpressionObject(new LispExpression(new LispExpressionObject(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispIdentifier("+")), 
+                new LispExpression(new LispNumber(2)),
+                new LispExpression(new LispNumber(3))
+            }))).ToString());
         }
 
         [Test]
