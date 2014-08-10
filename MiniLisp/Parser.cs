@@ -81,6 +81,9 @@ namespace MiniLisp
                 }
                 else if (IsString(t, out stringValue))
                 {
+
+                    // TODO: add expcted a closed "
+                    // (define e 3) (* 3 "e)
                     lispObject = new LispString(stringValue);
                 }
                 else if (IsNumber(t, out numberValue))

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniLisp", "MiniLisp\MiniLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniLisp.Tests", "MiniLisp.Tests\MiniLisp.Tests.csproj", "{B3CD1910-2FFB-4084-844A-F9E2D6D86E3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDE", "IDE\IDE.csproj", "{523311D2-6887-4606-AE97-879B7F0DE89E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B3CD1910-2FFB-4084-844A-F9E2D6D86E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3CD1910-2FFB-4084-844A-F9E2D6D86E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3CD1910-2FFB-4084-844A-F9E2D6D86E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{523311D2-6887-4606-AE97-879B7F0DE89E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{523311D2-6887-4606-AE97-879B7F0DE89E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{523311D2-6887-4606-AE97-879B7F0DE89E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{523311D2-6887-4606-AE97-879B7F0DE89E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

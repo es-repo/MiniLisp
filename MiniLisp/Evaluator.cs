@@ -60,6 +60,7 @@ namespace MiniLisp
         private LispValue EvalProcedure(LispObject[] objects)
         {
             LispProcedure procedure = (LispProcedure)objects[0];
+            //TODO: (+ define 4)
             LispValue[] args = objects.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);

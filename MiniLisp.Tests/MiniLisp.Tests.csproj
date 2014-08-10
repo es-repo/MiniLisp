@@ -51,7 +51,7 @@
     <Compile Include="LispProcedureContractVerificationTests.cs" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestStdLib.cs" />
+    <Compile Include="InterpretatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniLisp\MiniLisp.csproj">

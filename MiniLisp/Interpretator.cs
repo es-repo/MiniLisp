@@ -19,9 +19,9 @@ namespace MiniLisp
             return Read(File.ReadAllText(filePath));
         }
 
-        public IEnumerable<LispObject> Read(string code)
+        public IEnumerable<LispObject> Read(string input)
         {
-            IEnumerable<LispExpression> expressions = Parser.Parse(code);
+            IEnumerable<LispExpression> expressions = Parser.Parse(input);
             return expressions.Select(e => _evaluator.Eval(e));
         }
     }
