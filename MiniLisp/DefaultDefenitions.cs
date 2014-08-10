@@ -22,8 +22,6 @@ namespace MiniLisp
             defenitionsCollection.Add("/", new LispProcedure(
                 new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
                 Div));
-
-            defenitionsCollection.Add("pi", new LispNumber(3.141592653589793));
         }
 
         private LispValue Sum(LispValue[] arguments)

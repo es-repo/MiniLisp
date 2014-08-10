@@ -47,6 +47,7 @@
     <Compile Include="Exceptions\LispMultipleExpressionsException.cs" />
     <Compile Include="Exceptions\LispException.cs" />
     <Compile Include="Exceptions\LispProcedureExpectedException.cs" />
+    <Compile Include="Interpretator.cs" />
     <Compile Include="LispExpression.cs" />
     <Compile Include="LispObject.cs" />
     <Compile Include="LispObjects\LispDefine.cs" />
@@ -74,6 +75,11 @@
     <Compile Include="Trees\Tree.cs" />
     <Compile Include="Trees\TreeNode.cs" />
     <Compile Include="Trees\TreeNodeInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="StdLib.lsp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
