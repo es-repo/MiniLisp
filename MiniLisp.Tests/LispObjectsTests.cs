@@ -13,7 +13,7 @@ namespace MiniLisp.Tests
             Assert.AreEqual("5", new LispNumber(5).ToString());
             Assert.AreEqual("\"ab\"", new LispString("ab").ToString());
             Assert.AreEqual("#t", new LispBoolean(true).ToString());
-            Assert.AreEqual("#<procedure:+>", new LispProcedure(new LispProcedureSignature { Identifier = "+"},  o => o[0]).ToString());
+            Assert.AreEqual("#<procedure:+>", new LispProcedure(new LispProcedureSignature { Identifier = "+" }, o => o[0]).ToString());
             Assert.AreEqual("'(1 . #f)", new LispPair(new KeyValuePair<LispObject, LispObject>(new LispNumber(1), new LispBoolean(false))).ToString());
             Assert.AreEqual("nil", new LispNil().ToString());
             Assert.AreEqual("", new LispVoid().ToString());
@@ -22,7 +22,18 @@ namespace MiniLisp.Tests
             Assert.AreEqual("'()", new LispExpressionObject(new LispExpression(new LispEval())).ToString());
             Assert.AreEqual("'5", new LispExpressionObject(new LispExpression(new LispNumber(5))).ToString());
 
-            Assert.AreEqual("'(+ 2 (* 3 4)", new LispExpressionObject(new LispExpression(new LispEval())
+            Assert.AreEqual("'(1)", new LispExpressionObject(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispNumber(1))
+            }).ToString());
+
+            Assert.AreEqual("'(- 1)", new LispExpressionObject(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispIdentifier("-")), 
+                new LispExpression(new LispNumber(1))
+            }).ToString());
+
+            Assert.AreEqual("'(+ 2 (* 3 4))", new LispExpressionObject(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispIdentifier("+")), 
                 new LispExpression(new LispNumber(2)),
@@ -31,6 +42,26 @@ namespace MiniLisp.Tests
                     new LispExpression(new LispIdentifier("*")), 
                     new LispExpression(new LispNumber(3)),
                     new LispExpression(new LispNumber(4))
+                }
+            }).ToString());
+
+            Assert.AreEqual("'(+ 2 (* (+ 3) (- 4)))", new LispExpressionObject(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispIdentifier("+")), 
+                new LispExpression(new LispNumber(2)),
+                new LispExpression(new LispEval())
+                {
+                    new LispExpression(new LispIdentifier("*")), 
+                    new LispExpression(new LispEval())
+                    {
+                        new LispExpression(new LispIdentifier("+")), 
+                        new LispExpression(new LispNumber(3))    
+                    },
+                    new LispExpression(new LispEval())
+                    {
+                        new LispExpression(new LispIdentifier("-")), 
+                        new LispExpression(new LispNumber(4))    
+                    }
                 }
             }).ToString());
         }

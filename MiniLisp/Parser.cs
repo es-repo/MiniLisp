@@ -7,14 +7,19 @@ namespace MiniLisp
 {
     public class Parser
     {
-        private static readonly Regex _tokenizeRegex = new Regex(@"([^\s^\(^\)^']+)|\(|\)|'", RegexOptions.Compiled); // TODO: strings!
-        
+        private static readonly Regex _tokenizeRegex = new Regex(@"(""[^""]*"")|([^\s^\(^\)^'^""]+)|\(|\)|'", RegexOptions.Compiled);
+
+        public static IEnumerable<string> Tokenize(string code)
+        {
+            MatchCollection matches = _tokenizeRegex.Matches(code);
+            return matches.Cast<Match>().Select(m => m.Value);
+        }
+
         public static IEnumerable<LispExpression> Parse(string code)
         {
             IEnumerable<string> tokens = Tokenize(code);
-            //int openParensCount = 0;
-            LispExpression currentExpression = null;
             
+            Stack<LispExpression> stack = new Stack<LispExpression>();
             foreach (string t in tokens)
             {
                 LispObject lispObject = null;
@@ -28,7 +33,11 @@ namespace MiniLisp
                 }
                 else if (t == ")")
                 {
-
+                    // TODO: throw parser excpetion if ")" is not expected
+                    LispExpression expression = stack.Pop();
+                    if (stack.Count == 0)
+                        yield return expression;
+                    continue;
                 }
                 else if (t == "'")
                 {
@@ -58,17 +67,25 @@ namespace MiniLisp
                     lispObject = new LispIdentifier(t);
                 }
 
-                LispExpression subExpression = new LispExpression(lispObject);
-
-                if (currentExpression != null)
+                LispExpression childExpression = new LispExpression(lispObject);
+                
+                if (stack.Count > 0)
                 {
-                    currentExpression.Children.Add(subExpression);
+                    stack.Peek().Children.Add(childExpression);
                 }
-                else
+                
+                if (lispObject is LispEval)
                 {
-                    yield return subExpression;
+                    stack.Push(childExpression);
+                }
+                
+                if (stack.Count == 0)
+                {
+                    yield return childExpression;
                 }
             }
+
+            // TODO: throw parser excpetion if expression is not finished.
 
             yield break;
         }
@@ -106,11 +123,5 @@ namespace MiniLisp
             value = false;
             return false;
         } 
-
-        public static IEnumerable<string> Tokenize(string code)
-        {
-            MatchCollection matches = _tokenizeRegex.Matches(code);
-            return matches.Cast<Match>().Select(m => m.Value);
-        }
     }
 }
