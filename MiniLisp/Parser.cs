@@ -33,6 +33,8 @@ namespace MiniLisp
 
         private static LispExpression ParseSingleExpression(string[] tokens, int start, int end)
         {
+            // TODO: define: not allowed in an expression context
+            // (define fn (lambda () (( define d 3 ) d )))
             Stack<LispExpression> stack = new Stack<LispExpression>();
             for (int i = start; i < end; i++)
             {
@@ -44,7 +46,29 @@ namespace MiniLisp
 
                 if (t == "(")
                 {
-                    lispObject = new LispEval();
+                    if (i + 1 < tokens.Length && tokens[i + 1] == "lambda")
+                    {
+                        if (i + 2 >= tokens.Length || tokens[i + 2] == ")")
+                            throw new LispParsingException("Bad lambda syntax. Missed lambda parameters: "+ string.Join("", tokens.Skip(i).Take(3).ToArray()));
+
+                        int paramExprEnd = GetExpressionEnd(tokens, i + 2);
+                        LispExpression paramsExpression = ParseSingleExpression(tokens, i + 1, paramExprEnd);
+                        LispProcedureParameters parameters = new LispProcedureParameters(paramsExpression);
+
+                        // TODO: lambda to string in expression
+
+                        int bodyEnd;
+                        LispExpression[] body = GetSiblingExpressions(tokens, paramExprEnd, out bodyEnd);
+                        if (body.Length == 0)
+                            throw new LispParsingException("Bad lambda syntax. Missed lambda body: " + string.Join("", tokens.Skip(i).Take(bodyEnd - i + 1).ToArray()));
+
+                        lispObject = new LispProcedure(new LispProcedureSignature(), parameters, body);
+                        i = bodyEnd - 1;
+                    }
+                    else
+                    {
+                        lispObject = new LispEval();
+                    }
                 }
                 else if (t == ")")
                 {
@@ -139,6 +163,20 @@ namespace MiniLisp
                 i++;
             }
             return i;
+        }
+
+        private static LispExpression[] GetSiblingExpressions(string[] tokens, int start, out int end)
+        {
+            List<LispExpression> expressions = new List<LispExpression>();
+            end = start;
+            while (end < tokens.Length && tokens[end] != ")")
+            {
+                end = GetExpressionEnd(tokens, start);
+                LispExpression expression = ParseSingleExpression(tokens, start, end);
+                expressions.Add(expression);
+                start = end;
+            }
+            return expressions.ToArray();
         }
 
         private static bool IsNumber(string token, out double value)

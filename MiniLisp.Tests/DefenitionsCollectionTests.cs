@@ -11,8 +11,8 @@ namespace MiniLisp.Tests
         {
             DefenitionsCollection defenitions = new DefenitionsCollection();
 
-            defenitions.Add("+", new LispProcedure(new LispProcedureSignature(), o => o[0]));
-            LispProcedure proc = defenitions["+"] as LispProcedure;
+            defenitions.Add("+", new LispBuiltInProcedure(new LispProcedureSignature(), o => o[0]));
+            LispBuiltInProcedure proc = defenitions["+"] as LispBuiltInProcedure;
             Assert.IsNotNull(proc);
             Assert.AreEqual("+", proc.Signature.Identifier);
 

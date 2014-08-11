@@ -18,6 +18,14 @@ namespace MiniLisp
 
         public LispObject Eval(LispExpression expression)
         {
+            //TODO: duplicate definition for identifier
+            // (define e 5) (define e 5)
+
+            //TODO: (define fn (lambda (d) (define d 3) d)) - that's OK!
+
+            //TODO: duplicate argument name
+            // (define fn (lambda (d d) d))
+
             return Tree<LispObject>.Fold(expression,
                 (TreeNodeInfo<LispObject> expr, LispObject[] objects) =>
                 {
@@ -32,10 +40,12 @@ namespace MiniLisp
                         if (firstObj is LispDefine)
                             return EvalDefine(objects);
                         
-                        if (!(firstObj is LispProcedure))
+                        if (!(firstObj is LispProcedureBase))
                             throw new LispProcedureExpectedException(firstObj);
 
-                        return EvalProcedure(objects);
+                        return firstObj is LispBuiltInProcedure 
+                            ? EvalBuiltInProcedure(objects) 
+                            : EvalProcedure(objects);
                     }
                     
                     if (objects != null && objects.Length > 0)
@@ -57,13 +67,25 @@ namespace MiniLisp
                 });
         }
 
-        private LispValue EvalProcedure(LispObject[] objects)
+        private LispValue EvalBuiltInProcedure(LispObject[] objects)
         {
-            LispProcedure procedure = (LispProcedure)objects[0];
+            LispBuiltInProcedure procedure = (LispBuiltInProcedure)objects[0];
             //TODO: (+ define 4)
             LispValue[] args = objects.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
+        }
+
+        private LispObject EvalProcedure(LispObject[] objects)
+        {
+            LispProcedure procedure = (LispProcedure)objects[0];
+            //TODO: check args
+            //TODO: assert contract
+
+            if (procedure.Body.Length == 0)
+                throw new LispProcedureBodyExpressionExpectedException(procedure.Signature.Identifier);
+
+            return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e));
         }
 
         private LispVoid EvalDefine(LispObject[] objects)

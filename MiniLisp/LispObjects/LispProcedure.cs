@@ -1,25 +1,23 @@
-using System;
+﻿using System;
 
 namespace MiniLisp.LispObjects
 {
-    public class LispProcedure : LispValue
+    public class LispProcedure : LispProcedureBase
     {
-        public LispProcedureSignature Signature { get; set; }
+        public LispProcedureParameters Parameters { get; private set; }
 
-        public new Func<LispValue[], LispValue> Value 
+        public LispExpression[] Body 
         {
-            get { return (Func<LispValue[], LispValue>)base.Value; }
+            get { return (LispExpression[])Value; }
         }
 
-        public LispProcedure(LispProcedureSignature signature, Func<LispValue[], LispValue> value)
-            : base(value)
+        public LispProcedure(LispProcedureSignature signature, LispProcedureParameters parameters, LispExpression[] value)
+            : base(signature, value)
         {
-            Signature = signature;
-        }
+            if (parameters == null)
+                throw new ArgumentNullException("parameters");
 
-        public override string ToString()
-        {
-            return string.Format("#<{0}:{1}>", TypeToString(GetType()), Signature.Identifier);
+            Parameters = parameters;
         }
     }
 }

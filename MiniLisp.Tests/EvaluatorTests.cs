@@ -8,22 +8,21 @@ namespace MiniLisp.Tests
     [TestFixture]
     public class EvaluatorTests
     {
-        private readonly Evaluator _evaluator = new Evaluator();
-
         [Test]
         public void TestEval()
         {
-            LispObject evalResult = _evaluator.Eval(new LispExpression(new LispNumber(5)));
+            Evaluator evaluator = new Evaluator();
+            LispObject evalResult = evaluator.Eval(new LispExpression(new LispNumber(5)));
             Assert.AreEqual(new LispNumber(5), evalResult);
 
-            evalResult = _evaluator.Eval(new LispExpression(
+            evalResult = evaluator.Eval(new LispExpression(
                 new LispEval())
                 {
                     new LispExpression(new LispIdentifier("+")), new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
                 });
             Assert.AreEqual(new LispNumber(12), evalResult);
 
-            evalResult = _evaluator.Eval(new LispExpression(new LispEval())
+            evalResult = evaluator.Eval(new LispExpression(new LispEval())
                 {
                     new LispExpression(new LispIdentifier("+")), 
                         new LispExpression(new LispEval()) 
@@ -41,19 +40,22 @@ namespace MiniLisp.Tests
         [Test, ExpectedException(typeof(LispProcedureExpectedException))]
         public void TestEmptyEval()
         {
-            _evaluator.Eval(new LispExpression(new LispEval()));
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispEval()));
         }
 
         [Test, ExpectedException(typeof(LispProcedureExpectedException))]
         public void TestNotIdenifier()
         {
-            _evaluator.Eval(new LispExpression( new LispEval()) { new LispExpression(new LispNumber(5)) });
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression( new LispEval()) { new LispExpression(new LispNumber(5)) });
         }
 
         [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
         public void TestUnboundIdentifierInEval()
         {
-            _evaluator.Eval(new LispExpression(
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(
                 new LispEval())
                 {
                     new LispExpression(new LispIdentifier("$#F#@F")), new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
@@ -63,23 +65,26 @@ namespace MiniLisp.Tests
         [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
         public void TestUnboundIdentifier()
         {
-            _evaluator.Eval(new LispExpression(new LispIdentifier("$#F#@F")));
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispIdentifier("$#F#@F")));
         }
 
         [Test, ExpectedException(typeof(LispProcedureExpectedException))]
         public void TestIdentifierIsNotProcedure()
         {
-            _evaluator.Eval(new LispExpression(
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(
                 new LispEval())
                 {
-                    new LispExpression(new LispIdentifier("pi")), new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
+                    new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
                 });
         }
 
         [Test]
         public void TestEvalDefine()
         {
-            LispObject evalResult = _evaluator.Eval(new LispExpression(new LispEval())
+            Evaluator evaluator = new Evaluator();
+            LispObject evalResult = evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine()),
                 new LispExpression(new LispIdentifier("d")),
@@ -87,29 +92,29 @@ namespace MiniLisp.Tests
             });
             Assert.IsTrue(evalResult is LispVoid);
 
-            evalResult = _evaluator.Eval(new LispExpression(new LispIdentifier("d")));
+            evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("d")));
             Assert.AreEqual(new LispNumber(5), evalResult);
 
-            _evaluator.Eval(new LispExpression(new LispEval())
+            evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine()),
                 new LispExpression(new LispIdentifier("e")),
                 new LispExpression(new LispIdentifier("d")),
             });
 
-            evalResult = _evaluator.Eval(new LispExpression(new LispIdentifier("e")));
+            evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("e")));
             Assert.AreEqual(new LispNumber(5), evalResult);
 
-            _evaluator.Eval(new LispExpression(new LispEval())
+            evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine()),
                 new LispExpression(new LispIdentifier("sqrt")),
-                new LispExpression(new LispProcedure(
-                    new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1), 
+                new LispExpression(new LispBuiltInProcedure(
+                    new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1), 
                     args => new LispNumber(Math.Sqrt((((LispNumber)args[0]).Value)))))
             });
 
-            evalResult = _evaluator.Eval(new LispExpression(new LispEval())
+            evalResult = evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispIdentifier("sqrt")),
                 new LispExpression(new LispNumber(9))
@@ -120,7 +125,8 @@ namespace MiniLisp.Tests
         [Test, ExpectedException(typeof(LispIdentifierExpectedException))]
         public void TestEvalDefineWithoutArgs()
         {
-            _evaluator.Eval(new LispExpression(new LispEval())
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine())
             });
@@ -129,7 +135,8 @@ namespace MiniLisp.Tests
         [Test, ExpectedException(typeof(LispIdentifierExpectedException))]
         public void TestEvalDefineWithoutIdentidier()
         {
-            _evaluator.Eval(new LispExpression(new LispEval())
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine()),
                 new LispExpression(new LispNumber(5))
@@ -139,7 +146,8 @@ namespace MiniLisp.Tests
         [Test, ExpectedException(typeof(LispMultipleExpressionsException))]
         public void TestEvalDefineWithMultipleExpressions()
         {
-            _evaluator.Eval(new LispExpression(new LispEval())
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine()),
                 new LispExpression(new LispIdentifier("d")),
@@ -151,12 +159,74 @@ namespace MiniLisp.Tests
         [Test, ExpectedException(typeof(LispValueExpectedException))]
         public void TestEvalDefineWithNonValue()
         {
-            _evaluator.Eval(new LispExpression(new LispEval())
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispDefine()),
                 new LispExpression(new LispIdentifier("d")),
                 new LispExpression(new LispDefine())
             });
+        }
+
+        [Test]
+        public void TestEvalProcedure()
+        {
+            Evaluator evaluator = new Evaluator();
+
+            LispExpression procedureExpression = new LispExpression(new LispProcedure(
+                new LispProcedureSignature(),
+                new LispProcedureParameters(new LispExpression(new LispEval())), 
+                new[]
+                {
+                    new LispExpression(new LispEval())
+                    {
+                        new LispExpression(new LispDefine()),
+                        new LispExpression(new LispIdentifier("a")),
+                        new LispExpression(new LispNumber(3))
+                    },
+
+                    new LispExpression(new LispEval())
+                    {
+                        new LispExpression(new LispIdentifier("+")),
+                        new LispExpression(new LispNumber(2)),
+                        new LispExpression(new LispNumber(3))
+                    },
+
+                    new LispExpression(new LispEval())
+                    {
+                        new LispExpression(new LispIdentifier("*")),
+                        new LispExpression(new LispNumber(5)),
+                        new LispExpression(new LispIdentifier("a"))
+                    }
+                }));
+
+            LispObject evalResult = evaluator.Eval(procedureExpression);
+            Assert.IsTrue(evalResult is LispProcedure);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispEval()) { procedureExpression });
+            Assert.AreEqual(new LispNumber(15), evalResult);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispEval())
+                {
+                    procedureExpression    
+                }
+            });
+            Assert.AreEqual(new LispNumber(15), evalResult);
+        }
+
+        [Test, ExpectedException(typeof(LispProcedureBodyExpressionExpectedException))]
+        public void TestEvalProcedureWithoutBody()
+        {
+            Evaluator evaluator = new Evaluator();
+            LispExpression procedureExpression = new LispExpression(
+                new LispProcedure(
+                    new LispProcedureSignature(),
+                    new LispProcedureParameters(new LispExpression(new LispEval())), 
+                    new LispExpression[] { }));
+
+            evaluator.Eval(new LispExpression(new LispEval()) { procedureExpression });
         }
     }
 }

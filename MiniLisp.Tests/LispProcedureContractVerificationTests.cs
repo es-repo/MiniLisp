@@ -24,7 +24,7 @@ namespace MiniLisp.Tests
         public void TestAssertArgumentTypes()
         {
             LispProcedureSignature signature = new LispProcedureSignature(
-                new LispProcedureArgumentTypes(new Dictionary<int, Type>
+                new LispProcedureParameterTypes(new Dictionary<int, Type>
                 {
                     {1, typeof (LispNumber)},
                     {4, typeof (LispString)}

@@ -16,13 +16,13 @@ namespace MiniLisp
                 Type[] expectedTypes = new Type[arguments.Length];
                 
                 for (int i = 0; i < expectedTypes.Length; i++)
-                    expectedTypes[i] = signature.ArgumentTypes.OtherArgumentsType;
+                    expectedTypes[i] = signature.ArgumentTypes.OtherParametersType;
                 
-                if (signature.ArgumentTypes.ArgumentPositionAndType != null)
+                if (signature.ArgumentTypes.ParameterPositionAndType != null)
                 {
-                    foreach (int pos in signature.ArgumentTypes.ArgumentPositionAndType.Keys)
+                    foreach (int pos in signature.ArgumentTypes.ParameterPositionAndType.Keys)
                     {
-                        expectedTypes[pos] = signature.ArgumentTypes.ArgumentPositionAndType[pos];
+                        expectedTypes[pos] = signature.ArgumentTypes.ParameterPositionAndType[pos];
                     }
                 }
 

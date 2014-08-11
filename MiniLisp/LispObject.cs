@@ -30,7 +30,7 @@ namespace MiniLisp
                 return "expression";
             }
 
-            if (type == typeof(LispProcedure))
+            if (typeof(LispProcedureBase).IsAssignableFrom(type))
             {
                 return "procedure";
             }

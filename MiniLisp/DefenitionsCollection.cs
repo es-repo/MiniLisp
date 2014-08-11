@@ -39,9 +39,9 @@ namespace MiniLisp
 
         public void Add(string identifier, LispValue lispObject)
         {
-            if (lispObject is LispProcedure)
+            if (lispObject is LispProcedureBase)
             {
-                LispProcedure procedure = (LispProcedure) lispObject;
+                LispProcedureBase procedure = (LispProcedureBase)lispObject;
                 procedure.Signature.Identifier = identifier;
             }
 

@@ -7,21 +7,31 @@ namespace MiniLisp
     {
         public void Fill(DefenitionsCollection defenitionsCollection)
         {
-            defenitionsCollection.Add("+", new LispProcedure(
-                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber))), 
+            defenitionsCollection.Add("+", new LispBuiltInProcedure(
+                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber))), 
                 Sum));
 
-            defenitionsCollection.Add("-", new LispProcedure(
-                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
+            defenitionsCollection.Add("-", new LispBuiltInProcedure(
+                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1, true),
                 Sub));
 
-            defenitionsCollection.Add("*", new LispProcedure(
-                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber))),
+            defenitionsCollection.Add("*", new LispBuiltInProcedure(
+                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber))),
                 Mul));
 
-            defenitionsCollection.Add("/", new LispProcedure(
-                new LispProcedureSignature(new LispProcedureArgumentTypes(typeof(LispNumber)), 1, true),
+            defenitionsCollection.Add("/", new LispBuiltInProcedure(
+                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1, true),
                 Div));
+
+            defenitionsCollection.Add("=", new LispBuiltInProcedure(
+                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 2, true),
+                MathEqaul));
+
+            defenitionsCollection.Add("not", new LispBuiltInProcedure(
+                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispBoolean)), 1),
+                Not));
+
+            // TODO: cos sin tan atan log exp sqrt > < != string? boolean? number? equal
         }
 
         private LispValue Sum(LispValue[] arguments)
@@ -47,6 +57,17 @@ namespace MiniLisp
         {
             double first = ((LispNumber) arguments[0]).Value;
             return new LispNumber(arguments.Skip(1).Select(o => ((LispNumber)o).Value).Aggregate(first, (n1, n2) => n1 / n2));
+        }
+
+        private LispValue MathEqaul(LispValue[] arguments)
+        {
+            double first = ((LispNumber)arguments[0]).Value;
+            return new LispBoolean(arguments.Skip(1).Select(o => ((LispNumber)o).Value).All(n => n == first));
+        }
+
+        private LispValue Not(LispValue[] arguments)
+        {
+            return new LispBoolean(!((LispBoolean)arguments[0]).Value);
         }
     }
 }

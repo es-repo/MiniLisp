@@ -31,6 +31,7 @@ namespace MiniLisp.Tests
         [Row("'''(+ 2 (* '''(* 3 5) '4))", "'''(+ 2 (* '''(* 3 5) '4))")]
         [Row("'(+ '\"a b''' fd\")", "'(+ '\"a b''' fd\")")]
         [Row("(define d 5) (+ d d) (define str \"hello world!\")", "(define d 5) (+ d d) (define str \"hello world!\")")]
+        [Row("(lambda () (+ 2 3))", "(lambda () (+ 2 3))")]
         [Row("(", "", ExpectedException = typeof(LispParsingException))]
         [Row("((())", "", ExpectedException = typeof(LispParsingException))]
         [Row("(define sqr3 (* 3 3) ", "", ExpectedException = typeof(LispParsingException))]
