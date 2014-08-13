@@ -5,7 +5,6 @@
         public LispNil() : base(null)
         {
         }
-
         public override string ToString()
         {
             return TypeToString(GetType());

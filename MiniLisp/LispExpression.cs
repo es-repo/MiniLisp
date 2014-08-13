@@ -20,18 +20,18 @@ namespace MiniLisp
             {
                 if (currentDepth > ni.Depth)
                 {
-                    s.Append(")");
-                    currentDepth--;
+                    s.Append(new string(')', currentDepth - ni.Depth));
+                    currentDepth = ni.Depth;
                 }
 
-                if (ni.IndexAmongSiblings > 0)
+                if (s.Length > 0 && s[s.Length-1] != '(')
                 {
                     s.Append(" ");
                 }
 
-                if (ni.Node.Value is LispEval)
+                if (ni.Node.Value is ILispParentObject)
                 {
-                    s.Append("(");
+                    s.Append("(" + ni.Node.Value);
                     currentDepth++;
                 }
                 else

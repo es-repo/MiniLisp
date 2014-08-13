@@ -6,7 +6,7 @@ namespace MiniLisp
 {
     public static class LispProcedureContractVerification
     {        
-        public static void Assert(LispProcedureSignature signature, LispObject[] arguments)
+        public static void Assert(ProcedureSignature signature, LispObject[] arguments)
         {
             if (signature.Arity > -1 && ((!signature.AtLeastArity && signature.Arity != arguments.Length) || signature.Arity > arguments.Length))
                 throw new LispProcedureArityMismatchException(signature.Identifier, arguments.Length, signature.Arity, signature.AtLeastArity);

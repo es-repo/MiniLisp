@@ -2,8 +2,8 @@
 {
     public class LispProcedureBodyExpressionExpectedException : LispEvaluationException
     {
-        public LispProcedureBodyExpressionExpectedException(string procedureIdentifier)
-            : base(string.Format("{0}: Procedure body expresion is expected.", procedureIdentifier))
+        public LispProcedureBodyExpressionExpectedException()
+            : base(string.Format("Procedure body expresion is expected."))
         {
         }
     }

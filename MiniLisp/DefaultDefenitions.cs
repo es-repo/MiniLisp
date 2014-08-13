@@ -8,27 +8,27 @@ namespace MiniLisp
         public void Fill(DefenitionsCollection defenitionsCollection)
         {
             defenitionsCollection.Add("+", new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber))), 
+                new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber))), 
                 Sum));
 
             defenitionsCollection.Add("-", new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1, true),
+                new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 1, true),
                 Sub));
 
             defenitionsCollection.Add("*", new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber))),
+                new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber))),
                 Mul));
 
             defenitionsCollection.Add("/", new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1, true),
+                new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 1, true),
                 Div));
 
             defenitionsCollection.Add("=", new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 2, true),
+                new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 2, true),
                 MathEqaul));
 
             defenitionsCollection.Add("not", new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispBoolean)), 1),
+                new ProcedureSignature(new ProcedureParameterTypes(typeof(LispBoolean)), 1),
                 Not));
 
             // TODO: cos sin tan atan log exp sqrt > < != string? boolean? number? equal

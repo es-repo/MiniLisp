@@ -4,7 +4,12 @@ using MiniLisp.LispObjects;
 namespace MiniLisp
 {
     public abstract class LispObject
-    {                                
+    {
+        public override string ToString()
+        {
+            return TypeToString(GetType());
+        }
+                        
         public static string TypeToString(Type type)
         {
             if (!typeof(LispObject).IsAssignableFrom(type))
@@ -43,6 +48,26 @@ namespace MiniLisp
             if (type == typeof(LispVoid))
             {
                 return "void";
+            }
+
+            if (type == typeof (LispDefine))
+            {
+                return "define";
+            }
+
+            if (type == typeof (LispLambda))
+            {
+                return "lambda";
+            }
+
+            if (type == typeof (LispEval))
+            {
+                return "";
+            }
+
+            if (type == typeof(LispProcedureSignature))
+            {
+                return "";
             }
 
             throw new NotImplementedException();

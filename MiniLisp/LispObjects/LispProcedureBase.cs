@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace MiniLisp.LispObjects
 {
     public abstract class LispProcedureBase : LispValue
     {
-        public LispProcedureSignature Signature { get; set; }
+        public ProcedureSignature Signature { get; set; }
 
-        protected LispProcedureBase(LispProcedureSignature signature, object value) : base(value)
+        protected LispProcedureBase(ProcedureSignature signature, object value) : base(value)
         {
             if (signature == null)
                 throw new ArgumentNullException("signature");

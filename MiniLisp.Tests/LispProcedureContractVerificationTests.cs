@@ -16,15 +16,15 @@ namespace MiniLisp.Tests
         [Row(4, -1, false)]
         public void TestAssertAriry(int givenArgumentsCount, int arity, bool atLeast)
         {
-            LispProcedureSignature signature = new LispProcedureSignature(null, arity, atLeast);
+            ProcedureSignature signature = new ProcedureSignature(null, arity, atLeast);
             LispProcedureContractVerification.Assert(signature, new LispObject[givenArgumentsCount]);
         }
 
         [Test]
         public void TestAssertArgumentTypes()
         {
-            LispProcedureSignature signature = new LispProcedureSignature(
-                new LispProcedureParameterTypes(new Dictionary<int, Type>
+            ProcedureSignature signature = new ProcedureSignature(
+                new ProcedureParameterTypes(new Dictionary<int, Type>
                 {
                     {1, typeof (LispNumber)},
                     {4, typeof (LispString)}

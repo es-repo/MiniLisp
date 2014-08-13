@@ -4,20 +4,21 @@ namespace MiniLisp.LispObjects
 {
     public class LispProcedure : LispProcedureBase
     {
-        public LispProcedureParameters Parameters { get; private set; }
+        //TODO: parameters => signature
+        public LispProcedureSignature Parameters { get; private set; }
 
         public LispExpression[] Body 
         {
             get { return (LispExpression[])Value; }
         }
 
-        public LispProcedure(LispProcedureSignature signature, LispProcedureParameters parameters, LispExpression[] value)
-            : base(signature, value)
+        public LispProcedure(LispProcedureSignature signature, LispExpression[] value)
+            : base(new ProcedureSignature(), value)
         {
-            if (parameters == null)
-                throw new ArgumentNullException("parameters");
+            if (signature == null)
+                throw new ArgumentNullException("signature");
 
-            Parameters = parameters;
+            Parameters = signature;
         }
     }
 }

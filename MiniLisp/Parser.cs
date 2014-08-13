@@ -38,7 +38,7 @@ namespace MiniLisp
             Stack<LispExpression> stack = new Stack<LispExpression>();
             for (int i = start; i < end; i++)
             {
-                LispObject lispObject;
+                LispObject lispObject = null;
                 bool boolValue;
                 string stringValue;
                 double numberValue;
@@ -46,28 +46,24 @@ namespace MiniLisp
 
                 if (t == "(")
                 {
-                    if (i + 1 < tokens.Length && tokens[i + 1] == "lambda")
+                    if (i + 1 < tokens.Length)
                     {
-                        if (i + 2 >= tokens.Length || tokens[i + 2] == ")")
-                            throw new LispParsingException("Bad lambda syntax. Missed lambda parameters: "+ string.Join("", tokens.Skip(i).Take(3).ToArray()));
+                        switch (tokens[i + 1])
+                        {
+                            case "lambda":
+                                lispObject = new LispLambda();
+                                break;
+                        }
+                    }
 
-                        int paramExprEnd = GetExpressionEnd(tokens, i + 2);
-                        LispExpression paramsExpression = ParseSingleExpression(tokens, i + 1, paramExprEnd);
-                        LispProcedureParameters parameters = new LispProcedureParameters(paramsExpression);
-
-                        // TODO: lambda to string in expression
-
-                        int bodyEnd;
-                        LispExpression[] body = GetSiblingExpressions(tokens, paramExprEnd, out bodyEnd);
-                        if (body.Length == 0)
-                            throw new LispParsingException("Bad lambda syntax. Missed lambda body: " + string.Join("", tokens.Skip(i).Take(bodyEnd - i + 1).ToArray()));
-
-                        lispObject = new LispProcedure(new LispProcedureSignature(), parameters, body);
-                        i = bodyEnd - 1;
+                    if (lispObject == null)
+                    {
+                        bool isProcedureSignature = stack.Count > 0 && stack.Peek().Value is LispLambda && stack.Peek().Children.Count == 0;
+                        lispObject = isProcedureSignature ? (LispObject) new LispProcedureSignature() : new LispEval();
                     }
                     else
                     {
-                        lispObject = new LispEval();
+                        i++;
                     }
                 }
                 else if (t == ")")
@@ -105,7 +101,6 @@ namespace MiniLisp
                 }
                 else if (IsString(t, out stringValue))
                 {
-
                     // TODO: add expcted a closed "
                     // (define e 3) (* 3 "e)
                     lispObject = new LispString(stringValue);
@@ -126,7 +121,7 @@ namespace MiniLisp
                     stack.Peek().Children.Add(childExpression);
                 }
 
-                if (lispObject is LispEval)
+                if (t == "(")
                 {
                     stack.Push(childExpression);
                 }
@@ -163,20 +158,6 @@ namespace MiniLisp
                 i++;
             }
             return i;
-        }
-
-        private static LispExpression[] GetSiblingExpressions(string[] tokens, int start, out int end)
-        {
-            List<LispExpression> expressions = new List<LispExpression>();
-            end = start;
-            while (end < tokens.Length && tokens[end] != ")")
-            {
-                end = GetExpressionEnd(tokens, start);
-                LispExpression expression = ParseSingleExpression(tokens, start, end);
-                expressions.Add(expression);
-                start = end;
-            }
-            return expressions.ToArray();
         }
 
         private static bool IsNumber(string token, out double value)

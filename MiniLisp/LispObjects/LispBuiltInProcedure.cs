@@ -9,7 +9,7 @@ namespace MiniLisp.LispObjects
             get { return (Func<LispValue[], LispValue>)base.Value; }
         }
 
-        public LispBuiltInProcedure(LispProcedureSignature signature, Func<LispValue[], LispValue> value)
+        public LispBuiltInProcedure(ProcedureSignature signature, Func<LispValue[], LispValue> value)
             : base(signature, value)
         {
         }

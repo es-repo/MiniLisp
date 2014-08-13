@@ -18,6 +18,31 @@ namespace MiniLisp
 
         public LispObject Eval(LispExpression expression)
         {
+            LispExpression foldedLambdas = Tree<LispObject>.Fold<LispExpression>(expression, 
+                (ni, children) =>
+                {
+                    if (ni.Node.Value is LispLambda)
+                    {
+                        if (children.Length < 1 || !(children[0].Value is LispProcedureSignature))
+                            throw new LispProcedureSignatureExpressionExpectedException(children.Length > 0 ? children[0].Value : null);
+
+                        LispProcedureSignature signature = (LispProcedureSignature)children[0].Value;
+
+                        if (children.Length < 2)
+                            throw new LispProcedureBodyExpressionExpectedException();
+
+                        LispExpression[] bodyExpressions = children.Skip(1).ToArray();
+
+                        return new LispExpression(new LispProcedure(signature, bodyExpressions));
+                    }
+
+                    LispExpression e = new LispExpression(ni.Node.Value);
+                    e.AddRange(children);
+                    return e;
+                });
+
+            //LispProcedure mainProcedure = new LispProcedure(new LispProcedureSignature(), new []{ foldedLambdas });
+
             //TODO: duplicate definition for identifier
             // (define e 5) (define e 5)
 
@@ -26,8 +51,8 @@ namespace MiniLisp
             //TODO: duplicate argument name
             // (define fn (lambda (d d) d))
 
-            return Tree<LispObject>.Fold(expression,
-                (TreeNodeInfo<LispObject> expr, LispObject[] objects) =>
+            return Tree<LispObject>.Fold<LispObject>(foldedLambdas,
+                (expr, objects) =>
                 {
                     LispObject lispObject = expr.Node.Value;
                     if (lispObject is LispEval)
@@ -81,10 +106,6 @@ namespace MiniLisp
             LispProcedure procedure = (LispProcedure)objects[0];
             //TODO: check args
             //TODO: assert contract
-
-            if (procedure.Body.Length == 0)
-                throw new LispProcedureBodyExpressionExpectedException(procedure.Signature.Identifier);
-
             return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e));
         }
 
