@@ -1,7 +1,7 @@
 ﻿<Window x:Class="IDE.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Lisp IDE - Press F5 to Run" Height="409.514" Width="580.263" KeyUp="Window_KeyUp">
+        Title="Lisp IDE - Press F5 to Run" Height="800" Width="800" KeyUp="Window_KeyUp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition MinHeight="70" />
@@ -21,7 +21,7 @@
             </RichTextBox>
         </Grid>
         <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="0" Name="Grid2">
-            <RichTextBox Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Margin="0" Name="_outputTextBox" FontFamily="Consolas" FontSize="14" >
+            <RichTextBox Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Margin="0" Name="_outputTextBox" FontFamily="Consolas" FontSize="14" IsReadOnly="true" >
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type Paragraph}">
                         <Setter Property="Margin" Value="0"/>

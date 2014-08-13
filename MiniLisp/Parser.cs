@@ -53,6 +53,10 @@ namespace MiniLisp
                             case "lambda":
                                 lispObject = new LispLambda();
                                 break;
+
+                            case "define":
+                                lispObject = new LispDefine();
+                                break;
                         }
                     }
 
@@ -86,10 +90,6 @@ namespace MiniLisp
                     LispExpression expression = ParseSingleExpression(tokens, i + 1, exprObjEnd);
                     lispObject = new LispExpressionObject(expression);
                     i = exprObjEnd - 1;
-                }
-                else if (t == "define")
-                {
-                    lispObject = new LispDefine();
                 }
                 else if (t == "nil")
                 {

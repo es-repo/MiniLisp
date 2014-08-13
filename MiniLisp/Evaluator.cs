@@ -52,9 +52,9 @@ namespace MiniLisp
             // (define fn (lambda (d d) d))
 
             return Tree<LispObject>.Fold<LispObject>(foldedLambdas,
-                (expr, objects) =>
+                (ni, objects) =>
                 {
-                    LispObject lispObject = expr.Node.Value;
+                    LispObject lispObject = ni.Node.Value;
                     if (lispObject is LispEval)
                     {
                         if (objects.Length == 0)
@@ -62,9 +62,6 @@ namespace MiniLisp
 
                         LispObject firstObj = objects[0];
 
-                        if (firstObj is LispDefine)
-                            return EvalDefine(objects);
-                        
                         if (!(firstObj is LispProcedureBase))
                             throw new LispProcedureExpectedException(firstObj);
 
@@ -73,13 +70,18 @@ namespace MiniLisp
                             : EvalProcedure(objects);
                     }
                     
+                    if (lispObject is LispDefine)
+                    {
+                        return EvalDefine(objects);
+                    }
+
                     if (objects != null && objects.Length > 0)
                         throw new InvalidOperationException("Expected no arguments.");
 
                     if (lispObject is LispIdentifier)
                     {
-                        bool identiferRightAfterDefine = expr.IndexAmongSiblings == 1 && expr.ParentNode.Children[0].Value is LispDefine;
-                        if (!identiferRightAfterDefine)
+                        bool revealIdentifer = ni.ParentNode != null && ni.ParentNode.Value is LispDefine && ni.IndexAmongSiblings == 0;
+                        if (!revealIdentifer)
                         {
                             LispIdentifier identifier = (LispIdentifier) lispObject;
                             if (!_defenitions.Contains(identifier))
@@ -111,15 +113,16 @@ namespace MiniLisp
 
         private LispVoid EvalDefine(LispObject[] objects)
         {
-            if (objects.Length == 1 || !(objects[1] is LispIdentifier))
-                throw new LispIdentifierExpectedException(objects.Length == 1 ? null : objects[1]);
+            LispObject firstObject = objects.Length > 0 ? objects[0] : null;
+            if (!(firstObject is LispIdentifier))
+                throw new LispIdentifierExpectedException(firstObject);
 
-            LispIdentifier identifier = (LispIdentifier)objects[1];
+            LispIdentifier identifier = (LispIdentifier)firstObject;
 
-            if (objects.Length > 3)
+            if (objects.Length > 2)
                 throw new LispMultipleExpressionsException(identifier);
 
-            LispObject value = objects[2];
+            LispObject value = objects.Length > 1 ? objects[1] : null;
             if (!(value is LispValue))
                 throw new LispValueExpectedException(value);
 

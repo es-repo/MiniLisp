@@ -1,6 +1,6 @@
 ﻿namespace MiniLisp.LispObjects
 {
-    public class LispDefine : LispObject
+    public class LispDefine : LispObject, ILispParentObject
     {
     }
 }
