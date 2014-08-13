@@ -1,6 +1,6 @@
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
-    public class LispString : LispValue
+    public class LispString : LispValueElement
     {
         public LispString(string value) : base(value)
         {

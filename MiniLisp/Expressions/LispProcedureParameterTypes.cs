@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
-    public class ProcedureParameterTypes
+    public class LispProcedureParameterTypes
     {
         public IDictionary<int, Type> ParameterPositionAndType { get; private set; }
         public Type OtherParametersType { get; private set; }
 
-        public ProcedureParameterTypes(Type otherArgumentsType)
+        public LispProcedureParameterTypes(Type otherArgumentsType)
             : this(null, otherArgumentsType)
         {
         }
 
-        public ProcedureParameterTypes(IDictionary<int, Type> parameterPositionAndType, Type otherParametersType = null)
+        public LispProcedureParameterTypes(IDictionary<int, Type> parameterPositionAndType, Type otherParametersType = null)
         {
             ParameterPositionAndType = parameterPositionAndType;
             OtherParametersType = otherParametersType;

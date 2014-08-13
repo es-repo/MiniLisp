@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using MbUnit.Framework;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp.Tests
 {
@@ -44,6 +44,20 @@ namespace MiniLisp.Tests
         (+ v1 v2 v3 v4 (inf2))))
     inf))
 ((fn))", "95")]
+
+        //        [Row(@"
+        //(define mul 
+        //  (lambda (a) 
+        //    (define mulx 
+        //      (lambda (b) 
+        //        (* a b))) 
+        //    mulx))
+        //  
+        //(define mul3 (mul 3))
+        //(define mul5 (mul 5))
+        // 
+        //(mul3 3)
+        //(mul5 3) ")]
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();

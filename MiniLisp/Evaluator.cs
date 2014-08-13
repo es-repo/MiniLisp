@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using MiniLisp.Exceptions;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 using MiniLisp.Trees;
 
 namespace MiniLisp
@@ -23,12 +23,12 @@ namespace MiniLisp
                 {
                     if (ni.Node.Value is LispLambda)
                     {
-                        if (children.Length < 1 || !(children[0].Value is LispProcedureSignature))
+                        if (children.Length < 1 || !(children[0].Value is LispProcedureSignatureElement))
                             throw new LispProcedureSignatureExpressionExpectedException(children.Length > 0
                                 ? children[0].Value
                                 : null);
 
-                        LispProcedureSignature signature = (LispProcedureSignature) children[0].Value;
+                        LispProcedureSignatureElement signature = (LispProcedureSignatureElement) children[0].Value;
 
                         if (children.Length < 2)
                             throw new LispProcedureBodyExpressionExpectedException();
@@ -104,12 +104,12 @@ namespace MiniLisp
                 });
         }
 
-        private LispValue EvalBuiltInProcedure(LispExpressionElement[] elements)
+        private LispValueElement EvalBuiltInProcedure(LispExpressionElement[] elements)
         {
             LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
             //TODO: (+ define 4)
             //TODO: define inside expression is not allowed 
-            LispValue[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
+            LispValueElement[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValueElement>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
         }
@@ -119,6 +119,7 @@ namespace MiniLisp
             LispProcedure procedure = (LispProcedure)elements[0];
             //TODO: check args
             //TODO: assert contract
+            //TODO: duplicate argument name
             return procedure.Body.Aggregate((LispExpressionElement)null, (a, e) => Eval(e, procedure.Scope));
         }
 
@@ -134,10 +135,10 @@ namespace MiniLisp
                 throw new LispMultipleExpressionsException(identifier);
 
             LispExpressionElement value = elements.Length > 1 ? elements[1] : null;
-            if (!(value is LispValue))
+            if (!(value is LispValueElement))
                 throw new LispValueExpectedException(value);
 
-            scope[identifier] = (LispValue)value;
+            scope[identifier] = (LispValueElement)value;
             return new LispVoid();
         }
     }

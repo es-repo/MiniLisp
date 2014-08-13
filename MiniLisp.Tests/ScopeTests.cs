@@ -1,5 +1,5 @@
 ﻿using MbUnit.Framework;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp.Tests
 {
@@ -11,7 +11,7 @@ namespace MiniLisp.Tests
         {
             Scope scope = new Scope();
 
-            scope["+"] = new LispBuiltInProcedure(new ProcedureSignature(), o => o[0]);
+            scope["+"] = new LispBuiltInProcedure(new LispProcedureSignature(), o => o[0]);
             LispBuiltInProcedure proc = scope["+"] as LispBuiltInProcedure;
             Assert.IsNotNull(proc);
             Assert.AreEqual("+", proc.Signature.Identifier);

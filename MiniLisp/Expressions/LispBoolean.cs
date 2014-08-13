@@ -1,6 +1,6 @@
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
-    public class LispBoolean : LispValue
+    public class LispBoolean : LispValueElement
     {
         public new bool Value
         {

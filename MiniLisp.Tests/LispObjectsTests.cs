@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MbUnit.Framework;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp.Tests
 {
@@ -13,7 +13,7 @@ namespace MiniLisp.Tests
             Assert.AreEqual("5", new LispNumber(5).ToString());
             Assert.AreEqual("\"ab\"", new LispString("ab").ToString());
             Assert.AreEqual("#t", new LispBoolean(true).ToString());
-            Assert.AreEqual("#<procedure:+>", new LispBuiltInProcedure(new ProcedureSignature { Identifier = "+" }, o => o[0]).ToString());
+            Assert.AreEqual("#<procedure:+>", new LispBuiltInProcedure(new LispProcedureSignature { Identifier = "+" }, o => o[0]).ToString());
             Assert.AreEqual("'(1 . #f)", new LispPair(new KeyValuePair<LispExpressionElement, LispExpressionElement>(new LispNumber(1), new LispBoolean(false))).ToString());
             Assert.AreEqual("nil", new LispNil().ToString());
             Assert.AreEqual("", new LispVoid().ToString());

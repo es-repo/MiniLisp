@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MbUnit.Framework;
 using MiniLisp.Exceptions;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp.Tests
 {
@@ -16,15 +16,15 @@ namespace MiniLisp.Tests
         [Row(4, -1, false)]
         public void TestAssertAriry(int givenArgumentsCount, int arity, bool atLeast)
         {
-            ProcedureSignature signature = new ProcedureSignature(null, arity, atLeast);
+            LispProcedureSignature signature = new LispProcedureSignature(null, arity, atLeast);
             LispProcedureContractVerification.Assert(signature, new LispExpressionElement[givenArgumentsCount]);
         }
 
         [Test]
         public void TestAssertArgumentTypes()
         {
-            ProcedureSignature signature = new ProcedureSignature(
-                new ProcedureParameterTypes(new Dictionary<int, Type>
+            LispProcedureSignature signature = new LispProcedureSignature(
+                new LispProcedureParameterTypes(new Dictionary<int, Type>
                 {
                     {1, typeof (LispNumber)},
                     {4, typeof (LispString)}

@@ -1,7 +1,7 @@
 ﻿using System;
 using MbUnit.Framework;
 using MiniLisp.Exceptions;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp.Tests
 {
@@ -107,7 +107,7 @@ namespace MiniLisp.Tests
             {
                 new LispExpression(new LispIdentifier("sqrt")),
                 new LispExpression(new LispBuiltInProcedure(
-                    new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 1), 
+                    new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1), 
                     args => new LispNumber(Math.Sqrt((((LispNumber)args[0]).Value)))))
             });
 
@@ -165,7 +165,7 @@ namespace MiniLisp.Tests
 
             LispExpression lambdaExpression = new LispExpression(new LispLambda())
             {
-                new LispExpression(new LispProcedureSignature()),
+                new LispExpression(new LispProcedureSignatureElement()),
 
                 new LispExpression(new LispDefine())
                 {
@@ -201,7 +201,7 @@ namespace MiniLisp.Tests
                 {
                     new LispExpression(new LispLambda())
                     {
-                        new LispExpression(new LispProcedureSignature()),
+                        new LispExpression(new LispProcedureSignatureElement()),
                         lambdaExpression
                     }    
                 }
@@ -216,7 +216,7 @@ namespace MiniLisp.Tests
             LispExpression procedureExpression = new LispExpression(
                 new LispLambda())
                 {
-                    new LispExpression(new LispProcedureSignature())
+                    new LispExpression(new LispProcedureSignatureElement())
                 };
 
             evaluator.Eval(new LispExpression(new LispEval()) { procedureExpression });

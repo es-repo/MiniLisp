@@ -1,6 +1,6 @@
-﻿namespace MiniLisp.LispExpressionElements
+﻿namespace MiniLisp.Expressions
 {
-    public class LispNil : LispValue
+    public class LispNil : LispValueElement
     {
         public LispNil() : base(null)
         {

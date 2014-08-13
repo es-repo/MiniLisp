@@ -1,6 +1,6 @@
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
-    public class LispNumber : LispValue
+    public class LispNumber : LispValueElement
     {
         public new double Value 
         {

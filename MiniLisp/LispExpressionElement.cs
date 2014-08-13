@@ -1,5 +1,5 @@
 using System;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp
 {
@@ -65,7 +65,7 @@ namespace MiniLisp
                 return "";
             }
 
-            if (type == typeof(LispProcedureSignature))
+            if (type == typeof(LispProcedureSignatureElement))
             {
                 return "";
             }

@@ -1,4 +1,4 @@
-﻿namespace MiniLisp.LispExpressionElements
+﻿namespace MiniLisp.Expressions
 {
     public class LispEval : LispExpressionElement, ILispParentObject
     {

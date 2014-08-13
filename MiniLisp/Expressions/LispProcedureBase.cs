@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
-    public abstract class LispProcedureBase : LispValue
+    public abstract class LispProcedureBase : LispValueElement
     {
-        public ProcedureSignature Signature { get; set; }
+        public LispProcedureSignature Signature { get; set; }
 
-        protected LispProcedureBase(ProcedureSignature signature, object value) : base(value)
+        protected LispProcedureBase(LispProcedureSignature signature, object value) : base(value)
         {
             if (signature == null)
                 throw new ArgumentNullException("signature");

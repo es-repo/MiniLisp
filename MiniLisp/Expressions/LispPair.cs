@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
-    public class LispPair : LispValue
+    public class LispPair : LispValueElement
     {
         public new KeyValuePair<LispExpressionElement, LispExpressionElement> Value 
         {

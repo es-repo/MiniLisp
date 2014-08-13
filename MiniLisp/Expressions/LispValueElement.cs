@@ -1,10 +1,10 @@
-﻿namespace MiniLisp.LispExpressionElements
+﻿namespace MiniLisp.Expressions
 {
-    public abstract class LispValue : LispExpressionElement
+    public abstract class LispValueElement : LispExpressionElement
     {
         public object Value { get; private set; }
 
-        protected LispValue(object value)
+        protected LispValueElement(object value)
         {
             Value = value;
         }
@@ -24,15 +24,15 @@
             if (obj == null)
                 return false;
 
-            if (GetType() != obj.GetType() || !(obj is LispValue))
+            if (GetType() != obj.GetType() || !(obj is LispValueElement))
                 return false;
 
-            LispValue lispValue = (LispValue)obj;
+            LispValueElement valueElement = (LispValueElement)obj;
 
             if (Value == null)
-                return lispValue.Value == null;
+                return valueElement.Value == null;
 
-            return Value.Equals(lispValue.Value);
+            return Value.Equals(valueElement.Value);
         }
     }
 }

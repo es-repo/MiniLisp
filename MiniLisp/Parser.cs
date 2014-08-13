@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using MiniLisp.Exceptions;
-using MiniLisp.LispExpressionElements;
+using MiniLisp.Expressions;
 
 namespace MiniLisp
 {
@@ -63,7 +63,7 @@ namespace MiniLisp
                     if (lispElement == null)
                     {
                         bool isProcedureSignature = stack.Count > 0 && stack.Peek().Value is LispLambda && stack.Peek().Children.Count == 0;
-                        lispElement = isProcedureSignature ? (LispExpressionElement) new LispProcedureSignature() : new LispEval();
+                        lispElement = isProcedureSignature ? (LispExpressionElement) new LispProcedureSignatureElement() : new LispEval();
                     }
                     else
                     {

@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace MiniLisp.LispExpressionElements
+namespace MiniLisp.Expressions
 {
     public class LispProcedure : LispProcedureBase
     {
         //TODO: parameters => signature
-        public LispProcedureSignature Parameters { get; private set; }
+        public LispProcedureSignatureElement Parameters { get; private set; }
 
         public Scope Scope { get; private set; }
 
@@ -14,8 +14,8 @@ namespace MiniLisp.LispExpressionElements
             get { return (LispExpression[])Value; }
         }
 
-        public LispProcedure(LispProcedureSignature signature, LispExpression[] value, Scope scope = null)
-            : base(new ProcedureSignature(), value)
+        public LispProcedure(LispProcedureSignatureElement signature, LispExpression[] value, Scope scope = null)
+            : base(new LispProcedureSignature(), value)
         {
             if (signature == null)
                 throw new ArgumentNullException("signature");
