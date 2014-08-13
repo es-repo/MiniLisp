@@ -2,7 +2,7 @@
 {
     public class LispMultipleExpressionsException : LispEvaluationException
     {
-        public LispMultipleExpressionsException(LispObject after)
+        public LispMultipleExpressionsException(LispExpressionElement after)
             : base("Expected single expression after " + after)
         {
         }

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace MiniLisp
 {
@@ -38,7 +38,7 @@ namespace MiniLisp
             Stack<LispExpression> stack = new Stack<LispExpression>();
             for (int i = start; i < end; i++)
             {
-                LispObject lispObject = null;
+                LispExpressionElement lispElement = null;
                 bool boolValue;
                 string stringValue;
                 double numberValue;
@@ -51,19 +51,19 @@ namespace MiniLisp
                         switch (tokens[i + 1])
                         {
                             case "lambda":
-                                lispObject = new LispLambda();
+                                lispElement = new LispLambda();
                                 break;
 
                             case "define":
-                                lispObject = new LispDefine();
+                                lispElement = new LispDefine();
                                 break;
                         }
                     }
 
-                    if (lispObject == null)
+                    if (lispElement == null)
                     {
                         bool isProcedureSignature = stack.Count > 0 && stack.Peek().Value is LispLambda && stack.Peek().Children.Count == 0;
-                        lispObject = isProcedureSignature ? (LispObject) new LispProcedureSignature() : new LispEval();
+                        lispElement = isProcedureSignature ? (LispExpressionElement) new LispProcedureSignature() : new LispEval();
                     }
                     else
                     {
@@ -88,33 +88,33 @@ namespace MiniLisp
                         throw new LispParsingException("Expected an element for quoting \"'\".");
 
                     LispExpression expression = ParseSingleExpression(tokens, i + 1, exprObjEnd);
-                    lispObject = new LispExpressionObject(expression);
+                    lispElement = new LispExpressionValue(expression);
                     i = exprObjEnd - 1;
                 }
                 else if (t == "nil")
                 {
-                    lispObject = new LispNil();
+                    lispElement = new LispNil();
                 }
                 else if (IsBoolean(t, out boolValue))
                 {
-                    lispObject = new LispBoolean(boolValue);
+                    lispElement = new LispBoolean(boolValue);
                 }
                 else if (IsString(t, out stringValue))
                 {
                     // TODO: add expcted a closed "
                     // (define e 3) (* 3 "e)
-                    lispObject = new LispString(stringValue);
+                    lispElement = new LispString(stringValue);
                 }
                 else if (IsNumber(t, out numberValue))
                 {
-                    lispObject = new LispNumber(numberValue);
+                    lispElement = new LispNumber(numberValue);
                 }
                 else
                 {
-                    lispObject = new LispIdentifier(t);
+                    lispElement = new LispIdentifier(t);
                 }
 
-                LispExpression childExpression = new LispExpression(lispObject);
+                LispExpression childExpression = new LispExpression(lispElement);
 
                 if (stack.Count > 0)
                 {

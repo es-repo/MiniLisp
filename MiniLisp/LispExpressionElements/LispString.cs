@@ -1,4 +1,4 @@
-namespace MiniLisp.LispObjects
+namespace MiniLisp.LispExpressionElements
 {
     public class LispString : LispValue
     {

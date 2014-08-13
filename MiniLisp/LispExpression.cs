@@ -4,18 +4,18 @@ using MiniLisp.Trees;
 
 namespace MiniLisp
 {
-    public class LispExpression : TreeNode<LispObject>
+    public class LispExpression : TreeNode<LispExpressionElement>
     {        
-        public LispExpression(LispObject value) : base(value)
+        public LispExpression(LispExpressionElement value) : base(value)
         {
         }
 
         public override string ToString()
         {
-            IEnumerable<TreeNodeInfo<LispObject>> nodes = Tree<LispObject>.TraverseDepthFirstPreOrder(this);
+            IEnumerable<TreeNodeInfo<LispExpressionElement>> nodes = Tree<LispExpressionElement>.TraverseDepthFirstPreOrder(this);
             StringBuilder s = new StringBuilder();
             int currentDepth = 0;
-            foreach (TreeNodeInfo<LispObject> ni in nodes)
+            foreach (TreeNodeInfo<LispExpressionElement> ni in nodes)
             {
                 if (currentDepth > ni.Depth)
                 {

@@ -14,12 +14,12 @@ namespace MiniLisp
             foreach (var e in ReadFromFile("StdLib.lsp"));
         }
 
-        public IEnumerable<LispObject> ReadFromFile(string filePath)
+        public IEnumerable<LispExpressionElement> ReadFromFile(string filePath)
         {
             return Read(File.ReadAllText(filePath));
         }
 
-        public IEnumerable<LispObject> Read(string input)
+        public IEnumerable<LispExpressionElement> Read(string input)
         {
             IEnumerable<LispExpression> expressions = Parser.Parse(input);
             return expressions.Select(e => _evaluator.Eval(e));

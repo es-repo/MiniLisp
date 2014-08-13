@@ -1,8 +1,8 @@
-namespace MiniLisp.LispObjects
+namespace MiniLisp.LispExpressionElements
 {
-    public class LispExpressionObject : LispValue
+    public class LispExpressionValue : LispValue
     {
-        public LispExpressionObject(LispExpression value)
+        public LispExpressionValue(LispExpression value)
             : base(value)
         {
         }

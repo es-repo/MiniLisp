@@ -1,12 +1,12 @@
 using System;
 using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace MiniLisp
 {
     public static class LispProcedureContractVerification
     {        
-        public static void Assert(ProcedureSignature signature, LispObject[] arguments)
+        public static void Assert(ProcedureSignature signature, LispExpressionElement[] arguments)
         {
             if (signature.Arity > -1 && ((!signature.AtLeastArity && signature.Arity != arguments.Length) || signature.Arity > arguments.Length))
                 throw new LispProcedureArityMismatchException(signature.Identifier, arguments.Length, signature.Arity, signature.AtLeastArity);

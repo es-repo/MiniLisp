@@ -1,9 +1,9 @@
 using System;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace MiniLisp
 {
-    public abstract class LispObject
+    public abstract class LispExpressionElement
     {
         public override string ToString()
         {
@@ -12,7 +12,7 @@ namespace MiniLisp
                         
         public static string TypeToString(Type type)
         {
-            if (!typeof(LispObject).IsAssignableFrom(type))
+            if (!typeof(LispExpressionElement).IsAssignableFrom(type))
                 throw new ArgumentException("Type should be LispObject or derived from LispObject", "type");
 
             if (type == typeof (LispNumber))
@@ -30,7 +30,7 @@ namespace MiniLisp
                 return "boolean";
             }
 
-            if (type == typeof(LispExpressionObject))
+            if (type == typeof(LispExpressionValue))
             {
                 return "expression";
             }

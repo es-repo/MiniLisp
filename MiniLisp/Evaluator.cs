@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 using MiniLisp.Trees;
 
 namespace MiniLisp
@@ -16,9 +16,9 @@ namespace MiniLisp
             new DefaultDefenitions().Fill(_mainScope);
         }
 
-        public LispObject Eval(LispExpression expression)
+        public LispExpressionElement Eval(LispExpression expression)
         {
-            LispExpression foldedLambdas = Tree<LispObject>.Fold<LispExpression>(expression,
+            LispExpression foldedLambdas = Tree<LispExpressionElement>.Fold<LispExpression>(expression,
                 (ni, children) =>
                 {
                     if (ni.Node.Value is LispLambda)
@@ -46,7 +46,7 @@ namespace MiniLisp
             return Eval(foldedLambdas, _mainScope);
         }
 
-        private LispObject Eval(LispExpression expression, Scope scope)
+        private LispExpressionElement Eval(LispExpression expression, Scope scope)
         {
             //TODO: duplicate definition for identifier
             // (define e 5) (define e 5)
@@ -56,16 +56,16 @@ namespace MiniLisp
             //TODO: duplicate argument name
             // (define fn (lambda (d d) d))
 
-            return Tree<LispObject>.Fold<LispObject>(expression,
+            return Tree<LispExpressionElement>.Fold<LispExpressionElement>(expression,
                 (ni, objects) =>
                 {
-                    LispObject lispObject = ni.Node.Value;
-                    if (lispObject is LispEval)
+                    LispExpressionElement lispElement = ni.Node.Value;
+                    if (lispElement is LispEval)
                     {
                         if (objects.Length == 0)
                             throw new LispProcedureExpectedException();
 
-                        LispObject firstObj = objects[0];
+                        LispExpressionElement firstObj = objects[0];
 
                         if (!(firstObj is LispProcedureBase))
                             throw new LispProcedureExpectedException(firstObj);
@@ -75,7 +75,7 @@ namespace MiniLisp
                             : EvalProcedure(objects);
                     }
                     
-                    if (lispObject is LispDefine)
+                    if (lispElement is LispDefine)
                     {
                         return EvalDefine(objects, scope);
                     }
@@ -83,57 +83,57 @@ namespace MiniLisp
                     if (objects != null && objects.Length > 0)
                         throw new InvalidOperationException("Expected no arguments.");
 
-                    if (lispObject is LispIdentifier)
+                    if (lispElement is LispIdentifier)
                     {
                         bool passIdentifer = ni.ParentNode != null && ni.ParentNode.Value is LispDefine && ni.IndexAmongSiblings == 0;
                         if (!passIdentifer)
                         {
-                            LispIdentifier identifier = (LispIdentifier) lispObject;
+                            LispIdentifier identifier = (LispIdentifier) lispElement;
                             if (!scope.Contains(identifier))
                                 throw new LispUnboundIdentifierException(identifier);
-                            lispObject = scope[identifier];
+                            lispElement = scope[identifier];
                         }
                     }
 
-                    if (lispObject is LispProcedure)
+                    if (lispElement is LispProcedure)
                     {
-                        lispObject = ((LispProcedure) lispObject).Copy(new Scope(scope));
+                        lispElement = ((LispProcedure) lispElement).Copy(new Scope(scope));
                     }
 
-                    return lispObject;
+                    return lispElement;
                 });
         }
 
-        private LispValue EvalBuiltInProcedure(LispObject[] objects)
+        private LispValue EvalBuiltInProcedure(LispExpressionElement[] elements)
         {
-            LispBuiltInProcedure procedure = (LispBuiltInProcedure)objects[0];
+            LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
             //TODO: (+ define 4)
             //TODO: define inside expression is not allowed 
-            LispValue[] args = objects.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
+            LispValue[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
         }
 
-        private LispObject EvalProcedure(LispObject[] objects)
+        private LispExpressionElement EvalProcedure(LispExpressionElement[] elements)
         {
-            LispProcedure procedure = (LispProcedure)objects[0];
+            LispProcedure procedure = (LispProcedure)elements[0];
             //TODO: check args
             //TODO: assert contract
-            return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e, procedure.Scope));
+            return procedure.Body.Aggregate((LispExpressionElement)null, (a, e) => Eval(e, procedure.Scope));
         }
 
-        private LispVoid EvalDefine(LispObject[] objects, Scope scope)
+        private LispVoid EvalDefine(LispExpressionElement[] elements, Scope scope)
         {
-            LispObject firstObject = objects.Length > 0 ? objects[0] : null;
-            if (!(firstObject is LispIdentifier))
-                throw new LispIdentifierExpectedException(firstObject);
+            LispExpressionElement firstElement = elements.Length > 0 ? elements[0] : null;
+            if (!(firstElement is LispIdentifier))
+                throw new LispIdentifierExpectedException(firstElement);
 
-            LispIdentifier identifier = (LispIdentifier)firstObject;
+            LispIdentifier identifier = (LispIdentifier)firstElement;
 
-            if (objects.Length > 2)
+            if (elements.Length > 2)
                 throw new LispMultipleExpressionsException(identifier);
 
-            LispObject value = objects.Length > 1 ? objects[1] : null;
+            LispExpressionElement value = elements.Length > 1 ? elements[1] : null;
             if (!(value is LispValue))
                 throw new LispValueExpectedException(value);
 

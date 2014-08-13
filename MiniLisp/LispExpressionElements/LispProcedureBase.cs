@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MiniLisp.LispObjects
+namespace MiniLisp.LispExpressionElements
 {
     public abstract class LispProcedureBase : LispValue
     {

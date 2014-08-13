@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using MiniLisp;
 using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace IDE
 {

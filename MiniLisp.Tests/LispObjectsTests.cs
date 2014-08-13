@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MbUnit.Framework;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace MiniLisp.Tests
 {
@@ -14,26 +14,26 @@ namespace MiniLisp.Tests
             Assert.AreEqual("\"ab\"", new LispString("ab").ToString());
             Assert.AreEqual("#t", new LispBoolean(true).ToString());
             Assert.AreEqual("#<procedure:+>", new LispBuiltInProcedure(new ProcedureSignature { Identifier = "+" }, o => o[0]).ToString());
-            Assert.AreEqual("'(1 . #f)", new LispPair(new KeyValuePair<LispObject, LispObject>(new LispNumber(1), new LispBoolean(false))).ToString());
+            Assert.AreEqual("'(1 . #f)", new LispPair(new KeyValuePair<LispExpressionElement, LispExpressionElement>(new LispNumber(1), new LispBoolean(false))).ToString());
             Assert.AreEqual("nil", new LispNil().ToString());
             Assert.AreEqual("", new LispVoid().ToString());
             Assert.AreEqual("id", new LispIdentifier("id").ToString());
 
-            Assert.AreEqual("'()", new LispExpressionObject(new LispExpression(new LispEval())).ToString());
-            Assert.AreEqual("'5", new LispExpressionObject(new LispExpression(new LispNumber(5))).ToString());
+            Assert.AreEqual("'()", new LispExpressionValue(new LispExpression(new LispEval())).ToString());
+            Assert.AreEqual("'5", new LispExpressionValue(new LispExpression(new LispNumber(5))).ToString());
 
-            Assert.AreEqual("'(1)", new LispExpressionObject(new LispExpression(new LispEval())
+            Assert.AreEqual("'(1)", new LispExpressionValue(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispNumber(1))
             }).ToString());
 
-            Assert.AreEqual("'(- 1)", new LispExpressionObject(new LispExpression(new LispEval())
+            Assert.AreEqual("'(- 1)", new LispExpressionValue(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispIdentifier("-")), 
                 new LispExpression(new LispNumber(1))
             }).ToString());
 
-            Assert.AreEqual("'(+ 2 (* 3 4))", new LispExpressionObject(new LispExpression(new LispEval())
+            Assert.AreEqual("'(+ 2 (* 3 4))", new LispExpressionValue(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispIdentifier("+")), 
                 new LispExpression(new LispNumber(2)),
@@ -45,7 +45,7 @@ namespace MiniLisp.Tests
                 }
             }).ToString());
 
-            Assert.AreEqual("'(+ 2 (* (+ 3) (- 4)))", new LispExpressionObject(new LispExpression(new LispEval())
+            Assert.AreEqual("'(+ 2 (* (+ 3) (- 4)))", new LispExpressionValue(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispIdentifier("+")), 
                 new LispExpression(new LispNumber(2)),
@@ -65,7 +65,7 @@ namespace MiniLisp.Tests
                 }
             }).ToString());
 
-            Assert.AreEqual("''(+ 2 3)", new LispExpressionObject(new LispExpression(new LispExpressionObject(new LispExpression(new LispEval())
+            Assert.AreEqual("''(+ 2 3)", new LispExpressionValue(new LispExpression(new LispExpressionValue(new LispExpression(new LispEval())
             {
                 new LispExpression(new LispIdentifier("+")), 
                 new LispExpression(new LispNumber(2)),

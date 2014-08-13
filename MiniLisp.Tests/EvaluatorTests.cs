@@ -1,7 +1,7 @@
 ﻿using System;
 using MbUnit.Framework;
 using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace MiniLisp.Tests
 {
@@ -12,7 +12,7 @@ namespace MiniLisp.Tests
         public void TestEval()
         {
             Evaluator evaluator = new Evaluator();
-            LispObject evalResult = evaluator.Eval(new LispExpression(new LispNumber(5)));
+            LispExpressionElement evalResult = evaluator.Eval(new LispExpression(new LispNumber(5)));
             Assert.AreEqual(new LispNumber(5), evalResult);
 
             evalResult = evaluator.Eval(new LispExpression(
@@ -84,7 +84,7 @@ namespace MiniLisp.Tests
         public void TestEvalDefine()
         {
             Evaluator evaluator = new Evaluator();
-            LispObject evalResult = evaluator.Eval(new LispExpression(new LispDefine())
+            LispExpressionElement evalResult = evaluator.Eval(new LispExpression(new LispDefine())
             {
                 new LispExpression(new LispIdentifier("d")),
                 new LispExpression(new LispNumber(5)),
@@ -188,7 +188,7 @@ namespace MiniLisp.Tests
                 }
             };
 
-            LispObject evalResult = evaluator.Eval(lambdaExpression);
+            LispExpressionElement evalResult = evaluator.Eval(lambdaExpression);
             Assert.IsTrue(evalResult is LispProcedure);
 
             evalResult = evaluator.Eval(new LispExpression(new LispEval()) { lambdaExpression });

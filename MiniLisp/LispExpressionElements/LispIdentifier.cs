@@ -1,6 +1,6 @@
-namespace MiniLisp.LispObjects
+namespace MiniLisp.LispExpressionElements
 {
-    public class LispIdentifier : LispObject
+    public class LispIdentifier : LispExpressionElement
     {
         public string Value { get; private set; }
 

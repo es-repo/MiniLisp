@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MiniLisp.LispObjects
+namespace MiniLisp.LispExpressionElements
 {
     public class ProcedureParameterTypes
     {

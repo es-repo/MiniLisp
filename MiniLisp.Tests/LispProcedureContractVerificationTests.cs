@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MbUnit.Framework;
 using MiniLisp.Exceptions;
-using MiniLisp.LispObjects;
+using MiniLisp.LispExpressionElements;
 
 namespace MiniLisp.Tests
 {
@@ -17,7 +17,7 @@ namespace MiniLisp.Tests
         public void TestAssertAriry(int givenArgumentsCount, int arity, bool atLeast)
         {
             ProcedureSignature signature = new ProcedureSignature(null, arity, atLeast);
-            LispProcedureContractVerification.Assert(signature, new LispObject[givenArgumentsCount]);
+            LispProcedureContractVerification.Assert(signature, new LispExpressionElement[givenArgumentsCount]);
         }
 
         [Test]
@@ -30,18 +30,18 @@ namespace MiniLisp.Tests
                     {4, typeof (LispString)}
                 }, typeof (LispBoolean)));
 
-            LispProcedureContractVerification.Assert(signature, new LispObject[] { new LispBoolean(false), new LispNumber(0), new LispBoolean(false), new LispBoolean(false), new LispString("") });
+            LispProcedureContractVerification.Assert(signature, new LispExpressionElement[] { new LispBoolean(false), new LispNumber(0), new LispBoolean(false), new LispBoolean(false), new LispString("") });
 
             try
             {
-                LispProcedureContractVerification.Assert(signature, new LispObject[] { new LispNumber(0), new LispNumber(0), new LispBoolean(false), new LispBoolean(false), new LispString("") });
+                LispProcedureContractVerification.Assert(signature, new LispExpressionElement[] { new LispNumber(0), new LispNumber(0), new LispBoolean(false), new LispBoolean(false), new LispString("") });
                 Assert.Fail(typeof(LispProcedureContractViolationException).Name + " is expected.");
             }
             catch (LispProcedureContractViolationException) { }
 
             try
             {
-                LispProcedureContractVerification.Assert(signature, new LispObject[] { new LispBoolean(false), new LispNumber(0), new LispBoolean(false), new LispBoolean(false), new LispNumber(0) });
+                LispProcedureContractVerification.Assert(signature, new LispExpressionElement[] { new LispBoolean(false), new LispNumber(0), new LispBoolean(false), new LispBoolean(false), new LispNumber(0) });
                 Assert.Fail(typeof(LispProcedureContractViolationException).Name + " is expected.");
 
             }
