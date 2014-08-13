@@ -193,7 +193,7 @@ namespace MiniLisp.Tests
 
             evalResult = evaluator.Eval(new LispExpression(new LispEval()) { lambdaExpression });
             Assert.AreEqual(new LispNumber(15), evalResult);
-
+            
             evaluator = new Evaluator();
             evalResult = evaluator.Eval(new LispExpression(new LispEval())
             {

@@ -21,7 +21,6 @@ namespace MiniLisp
 
         public IEnumerable<LispObject> Read(string input)
         {
-            //TODO: reset defenitions
             IEnumerable<LispExpression> expressions = Parser.Parse(input);
             return expressions.Select(e => _evaluator.Eval(e));
         }

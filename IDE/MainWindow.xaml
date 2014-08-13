@@ -8,11 +8,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition MinHeight="70" />
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" Grid.RowSpan="1" HorizontalAlignment="Stretch" Margin="0" Name="DockPanel1">
+        <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Margin="0" Name="DockPanel1">
         </DockPanel>
-        <GridSplitter Grid.Row="1" Grid.RowSpan="1" ResizeDirection="Rows" Width="Auto" Height="10" HorizontalAlignment="Stretch" Margin="0" Name="GridSplitter1" />
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" Width="Auto" Height="10" HorizontalAlignment="Stretch" Margin="0" Name="GridSplitter1" />
         <Grid Grid.Row="0" HorizontalAlignment="Stretch" Margin="0" Name="Grid1">
-            <RichTextBox Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Margin="0" Name="_inputTextBox" FontFamily="Consolas" FontSize="14" >
+            <RichTextBox Grid.Column="0" HorizontalAlignment="Stretch" Margin="0" Name="_inputTextBox" FontFamily="Consolas" FontSize="14" >
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type Paragraph}">
                         <Setter Property="Margin" Value="0"/>
@@ -21,7 +21,7 @@
             </RichTextBox>
         </Grid>
         <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="0" Name="Grid2">
-            <RichTextBox Grid.Column="0" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" Margin="0" Name="_outputTextBox" FontFamily="Consolas" FontSize="14" IsReadOnly="true" >
+            <RichTextBox Grid.Column="0" HorizontalAlignment="Stretch" Margin="0" Name="_outputTextBox" FontFamily="Consolas" FontSize="14" IsReadOnly="true" >
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type Paragraph}">
                         <Setter Property="Margin" Value="0"/>

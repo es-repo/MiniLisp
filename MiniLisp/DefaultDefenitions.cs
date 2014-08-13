@@ -5,31 +5,31 @@ namespace MiniLisp
 {
     public class DefaultDefenitions
     {
-        public void Fill(DefenitionsCollection defenitionsCollection)
+        public void Fill(Scope scope)
         {
-            defenitionsCollection.Add("+", new LispBuiltInProcedure(
+            scope["+"] = new LispBuiltInProcedure(
                 new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber))), 
-                Sum));
+                Sum);
 
-            defenitionsCollection.Add("-", new LispBuiltInProcedure(
+            scope["-"] = new LispBuiltInProcedure(
                 new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 1, true),
-                Sub));
+                Sub);
 
-            defenitionsCollection.Add("*", new LispBuiltInProcedure(
+            scope["*"] = new LispBuiltInProcedure(
                 new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber))),
-                Mul));
+                Mul);
 
-            defenitionsCollection.Add("/", new LispBuiltInProcedure(
+            scope["/"] = new LispBuiltInProcedure(
                 new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 1, true),
-                Div));
+                Div);
 
-            defenitionsCollection.Add("=", new LispBuiltInProcedure(
+            scope["="] =  new LispBuiltInProcedure(
                 new ProcedureSignature(new ProcedureParameterTypes(typeof(LispNumber)), 2, true),
-                MathEqaul));
+                MathEqaul);
 
-            defenitionsCollection.Add("not", new LispBuiltInProcedure(
+            scope["not"] = new LispBuiltInProcedure(
                 new ProcedureSignature(new ProcedureParameterTypes(typeof(LispBoolean)), 1),
-                Not));
+                Not);
 
             // TODO: cos sin tan atan log exp sqrt > < != string? boolean? number? equal
         }

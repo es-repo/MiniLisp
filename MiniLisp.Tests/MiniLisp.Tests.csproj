@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefenitionsCollectionTests.cs" />
+    <Compile Include="ScopeTests.cs" />
     <Compile Include="EvaluatorTests.cs" />
     <Compile Include="LispObjectsTests.cs" />
     <Compile Include="LispProcedureContractVerificationTests.cs" />

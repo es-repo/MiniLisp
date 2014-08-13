@@ -14,7 +14,7 @@ namespace MiniLisp.LispObjects
 
         public override string ToString()
         {
-            return ((bool)Value) ? "#t" : "#f";
+            return Value ? "#t" : "#f";
         }
     }
 }

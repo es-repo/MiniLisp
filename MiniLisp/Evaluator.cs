@@ -8,25 +8,27 @@ namespace MiniLisp
 {
     public class Evaluator
     {
-        private readonly DefenitionsCollection _defenitions;
+        private readonly Scope _mainScope;
 
         public Evaluator()
         {
-            _defenitions = new DefenitionsCollection();
-            new DefaultDefenitions().Fill(_defenitions);
+            _mainScope = new Scope();
+            new DefaultDefenitions().Fill(_mainScope);
         }
 
         public LispObject Eval(LispExpression expression)
         {
-            LispExpression foldedLambdas = Tree<LispObject>.Fold<LispExpression>(expression, 
+            LispExpression foldedLambdas = Tree<LispObject>.Fold<LispExpression>(expression,
                 (ni, children) =>
                 {
                     if (ni.Node.Value is LispLambda)
                     {
                         if (children.Length < 1 || !(children[0].Value is LispProcedureSignature))
-                            throw new LispProcedureSignatureExpressionExpectedException(children.Length > 0 ? children[0].Value : null);
+                            throw new LispProcedureSignatureExpressionExpectedException(children.Length > 0
+                                ? children[0].Value
+                                : null);
 
-                        LispProcedureSignature signature = (LispProcedureSignature)children[0].Value;
+                        LispProcedureSignature signature = (LispProcedureSignature) children[0].Value;
 
                         if (children.Length < 2)
                             throw new LispProcedureBodyExpressionExpectedException();
@@ -41,8 +43,11 @@ namespace MiniLisp
                     return e;
                 });
 
-            //LispProcedure mainProcedure = new LispProcedure(new LispProcedureSignature(), new []{ foldedLambdas });
+            return Eval(foldedLambdas, _mainScope);
+        }
 
+        private LispObject Eval(LispExpression expression, Scope scope)
+        {
             //TODO: duplicate definition for identifier
             // (define e 5) (define e 5)
 
@@ -51,7 +56,7 @@ namespace MiniLisp
             //TODO: duplicate argument name
             // (define fn (lambda (d d) d))
 
-            return Tree<LispObject>.Fold<LispObject>(foldedLambdas,
+            return Tree<LispObject>.Fold<LispObject>(expression,
                 (ni, objects) =>
                 {
                     LispObject lispObject = ni.Node.Value;
@@ -67,12 +72,12 @@ namespace MiniLisp
 
                         return firstObj is LispBuiltInProcedure 
                             ? EvalBuiltInProcedure(objects) 
-                            : EvalProcedure(objects);
+                            : EvalProcedure(objects, scope);
                     }
                     
                     if (lispObject is LispDefine)
                     {
-                        return EvalDefine(objects);
+                        return EvalDefine(objects, scope);
                     }
 
                     if (objects != null && objects.Length > 0)
@@ -80,13 +85,13 @@ namespace MiniLisp
 
                     if (lispObject is LispIdentifier)
                     {
-                        bool revealIdentifer = ni.ParentNode != null && ni.ParentNode.Value is LispDefine && ni.IndexAmongSiblings == 0;
-                        if (!revealIdentifer)
+                        bool passIdentifer = ni.ParentNode != null && ni.ParentNode.Value is LispDefine && ni.IndexAmongSiblings == 0;
+                        if (!passIdentifer)
                         {
                             LispIdentifier identifier = (LispIdentifier) lispObject;
-                            if (!_defenitions.Contains(identifier))
+                            if (!scope.Contains(identifier))
                                 throw new LispUnboundIdentifierException(identifier);
-                            lispObject = _defenitions[identifier];
+                            lispObject = scope[identifier];
                         }
                     }
                     
@@ -103,15 +108,16 @@ namespace MiniLisp
             return procedure.Value(args);
         }
 
-        private LispObject EvalProcedure(LispObject[] objects)
+        private LispObject EvalProcedure(LispObject[] objects, Scope scope)
         {
             LispProcedure procedure = (LispProcedure)objects[0];
             //TODO: check args
             //TODO: assert contract
-            return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e));
+            Scope s = new Scope(scope);
+            return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e, s));
         }
 
-        private LispVoid EvalDefine(LispObject[] objects)
+        private LispVoid EvalDefine(LispObject[] objects, Scope scope)
         {
             LispObject firstObject = objects.Length > 0 ? objects[0] : null;
             if (!(firstObject is LispIdentifier))
@@ -126,7 +132,7 @@ namespace MiniLisp
             if (!(value is LispValue))
                 throw new LispValueExpectedException(value);
 
-            _defenitions.Add(identifier, (LispValue)value);
+            scope[identifier] = (LispValue)value;
             return new LispVoid();
         }
     }

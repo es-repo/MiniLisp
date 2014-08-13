@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultDefenitions.cs" />
-    <Compile Include="DefenitionsCollection.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="Exceptions\LispParsingException.cs" />
     <Compile Include="Exceptions\LispEvaluationException.cs" />
@@ -58,7 +58,6 @@
     <Compile Include="LispObjects\LispLambda.cs" />
     <Compile Include="LispObjects\LispProcedure.cs" />
     <Compile Include="LispObjects\LispProcedureBase.cs" />
-    <Compile Include="LispObjects\LispProcedureParameters.cs" />
     <Compile Include="LispObjects\LispProcedureSignature.cs" />
     <Compile Include="LispObjects\ProcedureSignature.cs" />
     <Compile Include="LispObjects\LispValue.cs" />
