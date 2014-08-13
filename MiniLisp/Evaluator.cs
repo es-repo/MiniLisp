@@ -72,7 +72,7 @@ namespace MiniLisp
 
                         return firstObj is LispBuiltInProcedure 
                             ? EvalBuiltInProcedure(objects) 
-                            : EvalProcedure(objects, scope);
+                            : EvalProcedure(objects);
                     }
                     
                     if (lispObject is LispDefine)
@@ -94,7 +94,12 @@ namespace MiniLisp
                             lispObject = scope[identifier];
                         }
                     }
-                    
+
+                    if (lispObject is LispProcedure)
+                    {
+                        lispObject = ((LispProcedure) lispObject).Copy(new Scope(scope));
+                    }
+
                     return lispObject;
                 });
         }
@@ -103,18 +108,18 @@ namespace MiniLisp
         {
             LispBuiltInProcedure procedure = (LispBuiltInProcedure)objects[0];
             //TODO: (+ define 4)
+            //TODO: define inside expression is not allowed 
             LispValue[] args = objects.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValue>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
         }
 
-        private LispObject EvalProcedure(LispObject[] objects, Scope scope)
+        private LispObject EvalProcedure(LispObject[] objects)
         {
             LispProcedure procedure = (LispProcedure)objects[0];
             //TODO: check args
             //TODO: assert contract
-            Scope s = new Scope(scope);
-            return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e, s));
+            return procedure.Body.Aggregate((LispObject)null, (a, e) => Eval(e, procedure.Scope));
         }
 
         private LispVoid EvalDefine(LispObject[] objects, Scope scope)
