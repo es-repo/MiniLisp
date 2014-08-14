@@ -10,28 +10,30 @@ namespace MiniLisp
         {
             if (signature.Arity > -1 && ((!signature.AtLeastArity && signature.Arity != arguments.Length) || signature.Arity > arguments.Length))
                 throw new LispProcedureArityMismatchException(signature.Identifier, arguments.Length, signature.Arity, signature.AtLeastArity);
-
-            if (signature.ArgumentTypes != null)
+            
+            Type[] expectedTypes = new Type[arguments.Length];
+            int i = 0;
+            if (signature.NamedParameters != null)
             {
-                Type[] expectedTypes = new Type[arguments.Length];
-                
-                for (int i = 0; i < expectedTypes.Length; i++)
-                    expectedTypes[i] = signature.ArgumentTypes.OtherParametersType;
-                
-                if (signature.ArgumentTypes.ParameterPositionAndType != null)
+                for (; i < signature.NamedParameters.Length; i++)
                 {
-                    foreach (int pos in signature.ArgumentTypes.ParameterPositionAndType.Keys)
-                    {
-                        expectedTypes[pos] = signature.ArgumentTypes.ParameterPositionAndType[pos];
-                    }
+                    expectedTypes[i] = signature.NamedParameters[i].Type;
                 }
+            }
 
-                for (int i = 0; i < arguments.Length; i++)
+            if (signature.NonNamedParametersType != null)
+            {
+                for (; i < arguments.Length; i++)
                 {
-                    if (expectedTypes[i] != null && expectedTypes[i] != arguments[i].GetType())
-                    {
-                        throw new LispProcedureContractViolationException(signature.Identifier, expectedTypes[i], arguments[i], i);
-                    }
+                    expectedTypes[i] = signature.NonNamedParametersType;
+                }
+            }
+
+            for (i = 0; i < arguments.Length; i++)
+            {
+                if (expectedTypes[i] != null && arguments[i] != null && !expectedTypes[i].IsInstanceOfType(arguments[i]))
+                {
+                    throw new LispProcedureContractViolationException(signature.Identifier, expectedTypes[i], arguments[i], i);
                 }
             }
         }

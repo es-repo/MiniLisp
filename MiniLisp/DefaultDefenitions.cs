@@ -8,27 +8,27 @@ namespace MiniLisp
         public void Fill(Scope scope)
         {
             scope["+"] = new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber))), 
+                new LispProcedureSignature(null, typeof(LispNumber)), 
                 Sum);
 
             scope["-"] = new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1, true),
+                new LispProcedureSignature(null, typeof(LispNumber), 1),
                 Sub);
 
             scope["*"] = new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber))),
+                new LispProcedureSignature(null, typeof(LispNumber)),
                 Mul);
 
             scope["/"] = new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 1, true),
+                new LispProcedureSignature(null, typeof(LispNumber), 1),
                 Div);
 
             scope["="] =  new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispNumber)), 2, true),
+                new LispProcedureSignature(null, typeof(LispNumber), 2),
                 MathEqaul);
 
             scope["not"] = new LispBuiltInProcedure(
-                new LispProcedureSignature(new LispProcedureParameterTypes(typeof(LispBoolean)), 1),
+                new LispProcedureSignature(null, typeof(LispBoolean), 1),
                 Not);
 
             // TODO: cos sin tan atan log exp sqrt > < != string? boolean? number? equal

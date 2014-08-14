@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultDefenitions.cs" />
+    <Compile Include="Exceptions\LispProcedureDuplicateParameterException.cs" />
+    <Compile Include="Expressions\LispProcedureParameter.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="Exceptions\LispParsingException.cs" />
@@ -70,7 +72,6 @@
     <Compile Include="Expressions\LispBuiltInProcedure.cs" />
     <Compile Include="Expressions\LispIdentifier.cs" />
     <Compile Include="Expressions\LispString.cs" />
-    <Compile Include="Expressions\LispProcedureParameterTypes.cs" />
     <Compile Include="Exceptions\LispProcedureArityMismatchException.cs" />
     <Compile Include="LispProcedureContractVerification.cs" />
     <Compile Include="Exceptions\LispProcedureContractViolationException.cs" />

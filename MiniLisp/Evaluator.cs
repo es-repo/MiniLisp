@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MiniLisp.Exceptions;
 using MiniLisp.Expressions;
@@ -28,7 +29,7 @@ namespace MiniLisp
                                 ? children[0].Value
                                 : null);
 
-                        LispProcedureSignatureElement signature = (LispProcedureSignatureElement) children[0].Value;
+                        LispProcedureSignature signature = EvalProcedureSignature(children[0]);
 
                         if (children.Length < 2)
                             throw new LispProcedureBodyExpressionExpectedException();
@@ -53,9 +54,6 @@ namespace MiniLisp
 
             //TODO: (define fn (lambda (d) (define d 3) d)) - that's OK!
 
-            //TODO: duplicate argument name
-            // (define fn (lambda (d d) d))
-
             return Tree<LispExpressionElement>.Fold<LispExpressionElement>(expression,
                 (ni, objects) =>
                 {
@@ -72,7 +70,7 @@ namespace MiniLisp
 
                         return firstObj is LispBuiltInProcedure 
                             ? EvalBuiltInProcedure(objects) 
-                            : EvalProcedure(objects);
+                            : EvalProcedure(objects, scope);
                     }
                     
                     if (lispElement is LispDefine)
@@ -95,31 +93,45 @@ namespace MiniLisp
                         }
                     }
 
-                    if (lispElement is LispProcedure)
-                    {
-                        lispElement = ((LispProcedure) lispElement).Copy(new Scope(scope));
-                    }
-
                     return lispElement;
                 });
+        }
+
+        private LispProcedureSignature EvalProcedureSignature(LispExpression signatureExpression)
+        {
+            IEnumerable<LispExpressionElement> elements = signatureExpression.Children.Select(n => n.Value).ToArray();
+            LispExpressionElement notIdentifier = elements.FirstOrDefault(e => !(e is LispIdentifier));
+            if (notIdentifier != null)
+                throw new LispIdentifierExpectedException(notIdentifier);
+
+            LispIdentifier[] identifiers = elements.Cast<LispIdentifier>().ToArray();
+
+            var duplicate = identifiers.GroupBy(e => e.Value).FirstOrDefault(g => g.Count() > 1);
+            if (duplicate != null)
+                throw new LispProcedureDuplicateParameterException(duplicate.Key);
+
+            LispProcedureParameter[] parameters = identifiers.Select(id => new LispProcedureParameter(id.Value, typeof (LispValueElement))).ToArray();
+            return new LispProcedureSignature(parameters);
         }
 
         private LispValueElement EvalBuiltInProcedure(LispExpressionElement[] elements)
         {
             LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
             //TODO: (+ define 4)
-            //TODO: define inside expression is not allowed 
             LispValueElement[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValueElement>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
         }
 
-        private LispExpressionElement EvalProcedure(LispExpressionElement[] elements)
+        private LispExpressionElement EvalProcedure(LispExpressionElement[] elements, Scope scope)
         {
-            LispProcedure procedure = (LispProcedure)elements[0];
-            //TODO: check args
-            //TODO: assert contract
-            //TODO: duplicate argument name
+            LispProcedure procedure = ((LispProcedure)elements[0]).Copy(scope);
+            LispExpressionElement[] arguments = elements.Skip(1).ToArray();
+            LispProcedureContractVerification.Assert(procedure.Signature, arguments);
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                procedure.Scope[procedure.Signature.NamedParameters[i].Identifier] = (LispValueElement)arguments[i];
+            }
             return procedure.Body.Aggregate((LispExpressionElement)null, (a, e) => Eval(e, procedure.Scope));
         }
 
