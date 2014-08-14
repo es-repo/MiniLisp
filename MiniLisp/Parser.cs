@@ -33,8 +33,6 @@ namespace MiniLisp
 
         private static LispExpression ParseSingleExpression(string[] tokens, int start, int end)
         {
-            // TODO: define: not allowed in an expression context
-            // (define fn (lambda () (( define d 3 ) d )))
             Stack<LispExpression> stack = new Stack<LispExpression>();
             for (int i = start; i < end; i++)
             {
@@ -105,8 +103,6 @@ namespace MiniLisp
                 }
                 else if (IsString(t, out stringValue))
                 {
-                    // TODO: add expcted a closed "
-                    // (define e 3) (* 3 "e)
                     lispElement = new LispString(stringValue);
                 }
                 else if (IsNumber(t, out numberValue))

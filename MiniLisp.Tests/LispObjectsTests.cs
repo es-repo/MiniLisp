@@ -16,7 +16,7 @@ namespace MiniLisp.Tests
             Assert.AreEqual("#<procedure:+>", new LispBuiltInProcedure(new LispProcedureSignature { Identifier = "+" }, o => o[0]).ToString());
             Assert.AreEqual("'(1 . #f)", new LispPair(new KeyValuePair<LispExpressionElement, LispExpressionElement>(new LispNumber(1), new LispBoolean(false))).ToString());
             Assert.AreEqual("nil", new LispNil().ToString());
-            Assert.AreEqual("", new LispVoid().ToString());
+            Assert.AreEqual("#<void>", new LispVoid().ToString());
             Assert.AreEqual("id", new LispIdentifier("id").ToString());
 
             Assert.AreEqual("'()", new LispExpressionValue(new LispExpression(new LispEval())).ToString());

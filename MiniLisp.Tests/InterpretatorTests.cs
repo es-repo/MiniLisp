@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using MbUnit.Framework;
+using MiniLisp.Exceptions;
 using MiniLisp.Expressions;
 
 namespace MiniLisp.Tests
@@ -95,6 +96,8 @@ namespace MiniLisp.Tests
 (set! d (lambda (d) (define d 3) (set! d (* d d)) (* d d)))
 d
 (d 15)", "#<procedure:d> 81")]
+
+        [Row(@"(define fn (lambda () (define fn2 (lambda () (define mul *) mul)) mul)) (fn)", "", ExpectedException = typeof(LispUnboundIdentifierException))]
         
         public void Test(string input, string expectedOutput)
         {

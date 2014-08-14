@@ -132,9 +132,7 @@ namespace MiniLisp
         private LispValueElement EvalBuiltInProcedure(LispExpressionElement[] elements)
         {
             LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
-            //TODO: (+ define 4)
-            //TODO: void args
-            LispValueElement[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValueElement>().ToArray();
+            LispValueElement[] args = elements.Skip(1).Cast<LispValueElement>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
         }

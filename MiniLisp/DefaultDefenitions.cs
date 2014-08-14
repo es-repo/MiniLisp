@@ -31,7 +31,7 @@ namespace MiniLisp
                 new LispProcedureSignature(null, typeof(LispBoolean), 1),
                 Not));
 
-            // TODO: cos sin tan atan log exp sqrt > < >= <= != string? boolean? number? equal set! if
+            // TODO: cos sin tan atan log exp sqrt > < >= <= != string? boolean? number? equal if
         }
 
         private LispValueElement Sum(LispValueElement[] arguments)
