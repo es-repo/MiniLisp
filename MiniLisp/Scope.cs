@@ -7,11 +7,11 @@ namespace MiniLisp
     {
         private readonly IDictionary<string, LispValueElement> _defenitions;
 
-        private readonly Scope _parent;
+        public Scope Parent { get; private set; }
 
         public Scope(Scope parent = null)
         {
-            _parent = parent; 
+            Parent = parent; 
             _defenitions = new Dictionary<string, LispValueElement>();
         }
 
@@ -22,7 +22,7 @@ namespace MiniLisp
 
         public bool Contains(string identifier)
         {
-            return _defenitions.ContainsKey(identifier) || (_parent != null && _parent.Contains(identifier));
+            return _defenitions.ContainsKey(identifier) || (Parent != null && Parent.Contains(identifier));
         }
 
         public LispValueElement this[LispIdentifier identifier]
@@ -37,8 +37,8 @@ namespace MiniLisp
             {
                 return _defenitions.ContainsKey(identifier)
                     ? _defenitions[identifier]
-                    : _parent != null
-                        ? _parent[identifier]
+                    : Parent != null
+                        ? Parent[identifier]
                         : null;
             }
             set

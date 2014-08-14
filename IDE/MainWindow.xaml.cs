@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -29,18 +30,23 @@ namespace IDE
             TextRange outputText = new TextRange(_outputTextBox.Document.ContentStart, _outputTextBox.Document.ContentEnd);
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+            
                 string code = new TextRange(_inputTextBox.Document.ContentStart, _inputTextBox.Document.ContentEnd).Text;
                 string result = string.Join(Environment.NewLine,
                     new Interpretator().Read(code).Where(o => !(o is LispVoid)). Select(o => o.ToString()).ToArray());
                 outputText.Text = result;
                 outputText.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+
+                stopwatch.Stop();
+                _outputTextBox.AppendText("\n\nTime: " + stopwatch.Elapsed);
             }
             catch (LispException lispException)
             {
                 outputText.Text = lispException.Message;
                 outputText.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
             }
-            
         }
     }
 }

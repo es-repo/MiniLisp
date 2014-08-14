@@ -89,17 +89,13 @@ namespace MiniLisp
                             LispIdentifier identifier = (LispIdentifier) lispElement;
                             if (!scope.Contains(identifier))
                                 throw new LispUnboundIdentifierException(identifier);
-                            //lispElement = scope[identifier];
                             return scope[identifier];
                         }
                     }
 
-                    if (lispElement is LispProcedure)
-                    {
-                        lispElement = ((LispProcedure) lispElement).Copy(scope);
-                    }
-
-                    return lispElement;
+                    return lispElement is LispProcedure
+                        ? ((LispProcedure) lispElement).Copy(scope)
+                        : lispElement;
                 });
         }
 
@@ -120,18 +116,10 @@ namespace MiniLisp
             return new LispProcedureSignature(parameters);
         }
 
-        private LispValueElement EvalBuiltInProcedure(LispExpressionElement[] elements)
-        {
-            LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
-            //TODO: (+ define 4)
-            LispValueElement[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValueElement>().ToArray();
-            LispProcedureContractVerification.Assert(procedure.Signature, args);
-            return procedure.Value(args);
-        }
-
         private LispExpressionElement EvalProcedure(LispExpressionElement[] elements, Scope scope)
         {
-            LispProcedure procedure = ((LispProcedure)elements[0]);//.Copy(scope);
+            LispProcedure procedure = ((LispProcedure)elements[0]);
+            procedure = ((LispProcedure)elements[0]).Copy(new Scope(procedure.Scope ?? scope));
             LispExpressionElement[] arguments = elements.Skip(1).ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, arguments);
             for (int i = 0; i < arguments.Length; i++)
@@ -139,6 +127,15 @@ namespace MiniLisp
                 procedure.Scope[procedure.Signature.NamedParameters[i].Identifier] = (LispValueElement)arguments[i];
             }
             return procedure.Body.Aggregate((LispExpressionElement)null, (a, e) => Eval(e, procedure.Scope));
+        }
+
+        private LispValueElement EvalBuiltInProcedure(LispExpressionElement[] elements)
+        {
+            LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
+            //TODO: (+ define 4)
+            LispValueElement[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValueElement>().ToArray();
+            LispProcedureContractVerification.Assert(procedure.Signature, args);
+            return procedure.Value(args);
         }
 
         private LispVoid EvalDefine(LispExpressionElement[] elements, Scope scope)
