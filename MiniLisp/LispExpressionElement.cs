@@ -17,7 +17,7 @@ namespace MiniLisp
                 {typeof(LispBoolean), "boolean"},
                 {typeof(LispExpressionValue), "expression"},
                 {typeof(LispBuiltInProcedure), "procedure"},
-                {typeof(LispProcedureBase), "procedure"},
+                {typeof(LispProcedure), "procedure"},
                 {typeof(LispNil), "nil"},
                 {typeof(LispVoid), "void"},
                 {typeof(LispDefine), "define"},

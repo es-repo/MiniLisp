@@ -57,6 +57,10 @@ namespace MiniLisp
                             case "define":
                                 lispElement = new LispDefine();
                                 break;
+
+                            case "set!":
+                                lispElement = new LispSet();
+                                break;
                         }
                     }
 

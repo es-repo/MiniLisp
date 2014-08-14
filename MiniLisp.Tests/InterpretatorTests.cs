@@ -89,6 +89,13 @@ namespace MiniLisp.Tests
 (fn2 3)", "560 4704")]
 
         [Row(@"(define fn (lambda (d) (define d 3) d)) (fn 5)", "3")]
+
+        [Row(@"
+(define d 4)
+(set! d (lambda (d) (define d 3) (set! d (* d d)) (* d d)))
+d
+(d 15)", "#<procedure:d> 81")]
+        
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
@@ -97,7 +104,6 @@ namespace MiniLisp.Tests
         }
 
         [Test]
-        [Row("pi", "3.14159265358979")]
         [Row("+ (+ 2) (+ 2 3 4)", "#<procedure:+> 2 9")]
         [Row("(- 2) (- 2 3)", "-2 -1")]
         [Row("(* 2) (* 2 3)", "2 6")]
@@ -105,6 +111,15 @@ namespace MiniLisp.Tests
         [Row("(= 2 2) (= 3 2)", "#t #f")]
         [Row("(not #f) (not true)", "#t #f")]
         public void TestDefaults(string input, string expectedOutput)
+        {
+            Interpretator interpretator = new Interpretator();
+            string output = string.Join(" ", interpretator.Read(input).Where(o => !(o is LispVoid)).Select(o => o.ToString()).ToArray());
+            Assert.AreEqual(expectedOutput, output);
+        }
+
+        [Test]
+        [Row("pi", "3.14159265358979")]
+        public void TestStdLib(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
             string output = string.Join(" ", interpretator.Read(input).Where(o => !(o is LispVoid)).Select(o => o.ToString()).ToArray());

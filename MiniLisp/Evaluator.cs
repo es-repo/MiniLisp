@@ -73,12 +73,18 @@ namespace MiniLisp
                         return EvalDefine(objects, scope);
                     }
 
+                    if (lispElement is LispSet)
+                    {
+                        return EvalSet(objects, scope);
+                    }
+
                     if (objects != null && objects.Length > 0)
                         throw new InvalidOperationException("Expected no arguments.");
 
                     if (lispElement is LispIdentifier)
                     {
-                        bool passIdentifer = ni.ParentNode != null && ni.ParentNode.Value is LispDefine && ni.IndexAmongSiblings == 0;
+                        bool passIdentifer = ni.ParentNode != null && ni.IndexAmongSiblings == 0
+                            && (ni.ParentNode.Value is LispDefine || ni.ParentNode.Value is LispSet);
                         if (!passIdentifer)
                         {
                             LispIdentifier identifier = (LispIdentifier) lispElement;
@@ -133,7 +139,7 @@ namespace MiniLisp
             return procedure.Value(args);
         }
 
-        private LispVoid EvalDefine(LispExpressionElement[] elements, Scope scope)
+        private LispVoid EvalDefineOrSet(LispExpressionElement[] elements, Scope scope, bool define)
         {
             LispExpressionElement firstElement = elements.Length > 0 ? elements[0] : null;
             if (!(firstElement is LispIdentifier))
@@ -148,8 +154,21 @@ namespace MiniLisp
             if (!(value is LispValueElement))
                 throw new LispValueExpectedException(value);
 
-            scope.Add(identifier, (LispValueElement)value);
+            if (define)
+                scope.Add(identifier, (LispValueElement) value);
+            else
+                scope[identifier] = (LispValueElement) value;
             return new LispVoid();
+        }
+
+        private LispVoid EvalDefine(LispExpressionElement[] elements, Scope scope)
+        {
+            return EvalDefineOrSet(elements, scope, true);
+        }
+
+        private LispVoid EvalSet(LispExpressionElement[] elements, Scope scope)
+        {
+            return EvalDefineOrSet(elements, scope, false);
         }
     }
 }

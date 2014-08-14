@@ -180,6 +180,26 @@ namespace MiniLisp.Tests
         }
 
         [Test]
+        public void TestEvalSet()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispDefine())
+            {
+                new LispExpression(new LispIdentifier("d")),
+                new LispExpression(new LispNumber(5)),
+            });
+            LispExpressionElement evalResult = evaluator.Eval(new LispExpression(new LispSet())
+            {
+                new LispExpression(new LispIdentifier("d")),
+                new LispExpression(new LispNumber(3)),
+            });
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("d")));
+            Assert.AreEqual(new LispNumber(3), evalResult);
+        }
+
+        [Test]
         public void TestEvalLambda()
         {            
             Evaluator evaluator = new Evaluator();
