@@ -1,6 +1,6 @@
 ﻿namespace MiniLisp.Expressions
 {
-    public class LispLambda : LispExpressionElement, ILispParentObject
+    public class LispLambda : LispExpressionElement
     {
     }
 }

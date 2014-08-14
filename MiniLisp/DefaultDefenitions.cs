@@ -7,29 +7,29 @@ namespace MiniLisp
     {
         public void Fill(Scope scope)
         {
-            scope["+"] = new LispBuiltInProcedure(
+            scope.Add("+", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispNumber)), 
-                Sum);
+                Sum));
 
-            scope["-"] = new LispBuiltInProcedure(
+            scope.Add("-", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispNumber), 1),
-                Sub);
+                Sub));
 
-            scope["*"] = new LispBuiltInProcedure(
+            scope.Add("*", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispNumber)),
-                Mul);
+                Mul));
 
-            scope["/"] = new LispBuiltInProcedure(
+            scope.Add("/", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispNumber), 1),
-                Div);
+                Div));
 
-            scope["="] =  new LispBuiltInProcedure(
+            scope.Add("=",  new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispNumber), 2),
-                MathEqaul);
+                MathEqaul));
 
-            scope["not"] = new LispBuiltInProcedure(
+            scope.Add("not", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispBoolean), 1),
-                Not);
+                Not));
 
             // TODO: cos sin tan atan log exp sqrt > < >= <= != string? boolean? number? equal set! if
         }

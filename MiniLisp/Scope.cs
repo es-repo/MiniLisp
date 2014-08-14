@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MiniLisp.Exceptions;
 using MiniLisp.Expressions;
 
 namespace MiniLisp
@@ -15,16 +16,6 @@ namespace MiniLisp
             _defenitions = new Dictionary<string, LispValueElement>();
         }
 
-        public bool Contains(LispIdentifier identifier)
-        {
-            return Contains(identifier.Value);
-        }
-
-        public bool Contains(string identifier)
-        {
-            return _defenitions.ContainsKey(identifier) || (Parent != null && Parent.Contains(identifier));
-        }
-
         public LispValueElement this[LispIdentifier identifier]
         {
             get { return this[identifier.Value]; }
@@ -35,20 +26,42 @@ namespace MiniLisp
         {
             get
             {
-                return _defenitions.ContainsKey(identifier)
-                    ? _defenitions[identifier]
-                    : Parent != null
-                        ? Parent[identifier]
-                        : null;
+                if (_defenitions.ContainsKey(identifier))
+                    return _defenitions[identifier];
+                if (Parent != null)
+                    return Parent[identifier];
+
+                throw new LispUnboundIdentifierException(identifier);
             }
             set
             {
-                if (value is LispProcedureBase)
-                {
-                    LispProcedureBase procedure = (LispProcedureBase)value;
-                    procedure.Signature.Identifier = identifier;
-                }
-                _defenitions[identifier] = value; 
+                if (!_defenitions.ContainsKey(identifier))
+                    throw new LispUnboundIdentifierException(identifier);
+
+                _defenitions[identifier] = value;
+                ElementAdded(identifier, value);
+            }
+        }
+
+        public void Add(LispIdentifier identifier, LispValueElement element)
+        {
+            Add(identifier.Value, element);
+        }
+
+        public void Add(string identifier, LispValueElement element)
+        {
+            if (_defenitions.ContainsKey(identifier))
+                throw new LispDuplicateIdentifierDefinitionException(identifier);
+            _defenitions.Add(identifier, element);
+            ElementAdded(identifier, element);
+        }
+
+        private static void ElementAdded(string identifier, LispValueElement element)
+        {
+            if (element is LispProcedureBase)
+            {
+                LispProcedureBase procedure = (LispProcedureBase)element;
+                procedure.Signature.Identifier = identifier;
             }
         }
     }

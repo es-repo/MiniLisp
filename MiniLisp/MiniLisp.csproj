@@ -40,8 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultDefenitions.cs" />
+    <Compile Include="Exceptions\LispDuplicateIdentifierDefinitionException.cs" />
     <Compile Include="Exceptions\LispProcedureDuplicateParameterException.cs" />
     <Compile Include="Expressions\LispProcedureParameter.cs" />
+    <Compile Include="Expressions\LispSet.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="Exceptions\LispParsingException.cs" />
@@ -51,7 +53,6 @@
     <Compile Include="Exceptions\LispProcedureSignatureExpressionExpectedException.cs" />
     <Compile Include="Exceptions\LispProcedureBodyExpressionExpectedException.cs" />
     <Compile Include="Exceptions\LispProcedureExpectedException.cs" />
-    <Compile Include="ILispParentObject.cs" />
     <Compile Include="Interpretator.cs" />
     <Compile Include="LispExpression.cs" />
     <Compile Include="LispExpressionElement.cs" />

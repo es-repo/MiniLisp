@@ -8,8 +8,6 @@ namespace MiniLisp.Tests
     public class InterpretatorTests
     {
         [Test]
-        [Row("pi", "3.14159265358979")]
-        [Row("+", "#<procedure:+>")]
         [Row("(define x 3) (define y 4) (define z 5) (define sum +) (define mul *) (mul x (sum y z)) (sum x y z)", "27 12")]
 
         [Row(@"
@@ -89,7 +87,24 @@ namespace MiniLisp.Tests
 (define fn2 (fn 7 8 4))
 (fn1 7)
 (fn2 3)", "560 4704")]
+
+        [Row(@"(define fn (lambda (d) (define d 3) d)) (fn 5)", "3")]
         public void Test(string input, string expectedOutput)
+        {
+            Interpretator interpretator = new Interpretator();
+            string output = string.Join(" ", interpretator.Read(input).Where(o => !(o is LispVoid)).Select(o => o.ToString()).ToArray());
+            Assert.AreEqual(expectedOutput, output);
+        }
+
+        [Test]
+        [Row("pi", "3.14159265358979")]
+        [Row("+ (+ 2) (+ 2 3 4)", "#<procedure:+> 2 9")]
+        [Row("(- 2) (- 2 3)", "-2 -1")]
+        [Row("(* 2) (* 2 3)", "2 6")]
+        [Row("(/ 2) (/ 3 2)", "2 1.5")]
+        [Row("(= 2 2) (= 3 2)", "#t #f")]
+        [Row("(not #f) (not true)", "#t #f")]
+        public void TestDefaults(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
             string output = string.Join(" ", interpretator.Read(input).Where(o => !(o is LispVoid)).Select(o => o.ToString()).ToArray());

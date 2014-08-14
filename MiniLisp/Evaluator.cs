@@ -49,11 +49,6 @@ namespace MiniLisp
 
         private LispExpressionElement Eval(LispExpression expression, Scope scope)
         {
-            //TODO: duplicate definition for identifier
-            // (define e 5) (define e 5)
-
-            //TODO: (define fn (lambda (d) (define d 3) d)) - that's OK!
-
             return Tree<LispExpressionElement>.Fold<LispExpressionElement>(expression,
                 (ni, objects) =>
                 {
@@ -87,8 +82,6 @@ namespace MiniLisp
                         if (!passIdentifer)
                         {
                             LispIdentifier identifier = (LispIdentifier) lispElement;
-                            if (!scope.Contains(identifier))
-                                throw new LispUnboundIdentifierException(identifier);
                             return scope[identifier];
                         }
                     }
@@ -119,12 +112,13 @@ namespace MiniLisp
         private LispExpressionElement EvalProcedure(LispExpressionElement[] elements, Scope scope)
         {
             LispProcedure procedure = ((LispProcedure)elements[0]);
-            procedure = ((LispProcedure)elements[0]).Copy(new Scope(procedure.Scope ?? scope));
+            Scope argumentsScope = new Scope(procedure.Scope ?? scope);
+            procedure = ((LispProcedure)elements[0]).Copy(new Scope(argumentsScope));
             LispExpressionElement[] arguments = elements.Skip(1).ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, arguments);
             for (int i = 0; i < arguments.Length; i++)
             {
-                procedure.Scope[procedure.Signature.NamedParameters[i].Identifier] = (LispValueElement)arguments[i];
+                argumentsScope.Add(procedure.Signature.NamedParameters[i].Identifier, (LispValueElement)arguments[i]);
             }
             return procedure.Body.Aggregate((LispExpressionElement)null, (a, e) => Eval(e, procedure.Scope));
         }
@@ -133,6 +127,7 @@ namespace MiniLisp
         {
             LispBuiltInProcedure procedure = (LispBuiltInProcedure)elements[0];
             //TODO: (+ define 4)
+            //TODO: void args
             LispValueElement[] args = elements.Skip(1).Where(o => !(o is LispVoid)).Cast<LispValueElement>().ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, args);
             return procedure.Value(args);
@@ -153,7 +148,7 @@ namespace MiniLisp
             if (!(value is LispValueElement))
                 throw new LispValueExpectedException(value);
 
-            scope[identifier] = (LispValueElement)value;
+            scope.Add(identifier, (LispValueElement)value);
             return new LispVoid();
         }
     }

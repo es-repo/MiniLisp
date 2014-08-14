@@ -64,6 +64,25 @@ namespace MiniLisp.Tests
                 });
         }
 
+        [Test, ExpectedException(typeof(LispDuplicateIdentifierDefinitionException))]
+        public void TestDuplicateIdentifierInEval()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(
+                new LispDefine())
+                {
+                    new LispExpression(new LispIdentifier("a")), 
+                    new LispExpression(new LispNumber(4))
+                });
+
+            evaluator.Eval(new LispExpression(
+                new LispDefine())
+                {
+                    new LispExpression(new LispIdentifier("a")), 
+                    new LispExpression(new LispNumber(4))
+                });
+        }
+
         [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
         public void TestUnboundIdentifier()
         {
