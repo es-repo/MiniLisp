@@ -89,8 +89,14 @@ namespace MiniLisp
                             LispIdentifier identifier = (LispIdentifier) lispElement;
                             if (!scope.Contains(identifier))
                                 throw new LispUnboundIdentifierException(identifier);
-                            lispElement = scope[identifier];
+                            //lispElement = scope[identifier];
+                            return scope[identifier];
                         }
+                    }
+
+                    if (lispElement is LispProcedure)
+                    {
+                        lispElement = ((LispProcedure) lispElement).Copy(scope);
                     }
 
                     return lispElement;
@@ -125,7 +131,7 @@ namespace MiniLisp
 
         private LispExpressionElement EvalProcedure(LispExpressionElement[] elements, Scope scope)
         {
-            LispProcedure procedure = ((LispProcedure)elements[0]).Copy(scope);
+            LispProcedure procedure = ((LispProcedure)elements[0]);//.Copy(scope);
             LispExpressionElement[] arguments = elements.Skip(1).ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, arguments);
             for (int i = 0; i < arguments.Length; i++)

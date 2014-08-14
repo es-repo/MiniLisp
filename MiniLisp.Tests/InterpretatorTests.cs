@@ -45,15 +45,22 @@ namespace MiniLisp.Tests
 //    inf))
 //((fn))", "95")]
 
-        [Row(@"
-(define mul (lambda (a) (lambda (b) (* a b))))
-(define mul2 (mul 2))
-(define mul3 (mul 3))
+//        [Row(@"
+//(define mul (lambda (a) (lambda (b) (* a b))))
+//(define mul2 (mul 2))
+//(define mul3 (mul 3))
+//
+//(mul2 4)
+//(mul2 8)
+//(mul3 4)
+//(mul3 8)", "8 16 12 24")]
 
-(mul2 4)
-(mul2 8)
-(mul3 4)
-(mul3 8)", "8 16 12 24")]
+//        [Row(@"
+//(define fn (lambda (a) (lambda () a)))
+//(define fn2 (fn 2))
+//(define fn3 (fn 3))
+//(fn2)
+//(fn3)", "2 3")]
 
 //        [Row(@"
 //(define mul (lambda (a) (lambda (b) (* a b))))

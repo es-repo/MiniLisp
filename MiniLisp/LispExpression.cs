@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using MiniLisp.Trees;
 
 namespace MiniLisp
@@ -11,37 +11,17 @@ namespace MiniLisp
         }
 
         public override string ToString()
+        {            
+            return ToString(this);
+        }
+
+        public static string ToString(LispExpression expression)
         {
-            IEnumerable<TreeNodeInfo<LispExpressionElement>> nodes = Tree<LispExpressionElement>.TraverseDepthFirstPreOrder(this);
-            StringBuilder s = new StringBuilder();
-            int currentDepth = 0;
-            foreach (TreeNodeInfo<LispExpressionElement> ni in nodes)
-            {
-                if (currentDepth > ni.Depth)
-                {
-                    s.Append(new string(')', currentDepth - ni.Depth));
-                    currentDepth = ni.Depth;
-                }
-
-                if (s.Length > 0 && s[s.Length-1] != '(')
-                {
-                    s.Append(" ");
-                }
-
-                if (ni.Node.Value is ILispParentObject)
-                {
-                    s.Append("(" + ni.Node.Value);
-                    currentDepth++;
-                }
-                else
-                {
-                    s.Append(ni.Node.Value);
-                }
-            }
-
-            s.Append(new string(')', currentDepth));
-
-            return s.ToString();
+            IEnumerable<string> i = Enumerable.Repeat(expression.Value.ToString(), expression.Value.ToString() == "" ? 0 : 1).Concat(expression.Select(e => e.ToString()));
+            string s = string.Join(" ", i.ToArray());
+            if (expression.Value is ILispParentObject)
+                s = "(" + s + ")";
+            return s;
         }
     }
 }
