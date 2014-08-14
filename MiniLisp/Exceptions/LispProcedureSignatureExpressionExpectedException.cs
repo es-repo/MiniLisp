@@ -3,7 +3,7 @@
     public class LispProcedureSignatureExpressionExpectedException : LispEvaluationException
     {
         public LispProcedureSignatureExpressionExpectedException(LispExpressionElement given = null)
-            : base("Procedure signature expresion is expected." + (given != null ? given.ToString() : ""))
+            : base("Procedure signature expression is expected." + (given != null ? given.ToString() : ""))
         {
         }
     }

@@ -3,7 +3,7 @@
     public class LispProcedureBodyExpressionExpectedException : LispEvaluationException
     {
         public LispProcedureBodyExpressionExpectedException()
-            : base(string.Format("Procedure body expresion is expected."))
+            : base(string.Format("Procedure body expression is expected."))
         {
         }
     }

@@ -17,28 +17,47 @@ namespace MiniLisp
             new DefaultDefenitions().Fill(_mainScope);
         }
 
-        public LispExpressionElement Eval(LispExpression expression)
+        public LispValueElement Eval(LispExpression expression)
         {
             LispExpression foldedLambdas = Tree<LispExpressionElement>.Fold<LispExpression>(expression,
                 (ni, children) =>
                 {
-                    if (ni.Node.Value is LispLambda)
+                    bool procedureInLambda = ni.Node.Value is LispLambda;
+                    if (procedureInLambda)
                     {
                         if (children.Length < 1 || !(children[0].Value is LispProcedureSignatureElement))
                             throw new LispProcedureSignatureExpressionExpectedException(children.Length > 0
                                 ? children[0].Value
                                 : null);
+                    }
 
-                        LispProcedureSignature signature = EvalProcedureSignature(children[0]);
+                    LispExpression procedureExpression = null;
+                    bool procedureInLambdaOrDefine = procedureInLambda || 
+                        ni.Node.Value is LispDefine && children.Length > 0 && children[0].Value is LispProcedureSignatureElement;
+                    if (procedureInLambdaOrDefine)
+                    {
+                        LispProcedureSignature signature = EvalProcedureSignature(children[0], !procedureInLambda);
 
                         if (children.Length < 2)
                             throw new LispProcedureBodyExpressionExpectedException();
 
                         LispExpression[] bodyExpressions = children.Skip(1).ToArray();
-
-                        return new LispExpression(new LispProcedure(signature, bodyExpressions));
+                        procedureExpression = new LispExpression(new LispProcedure(signature, bodyExpressions));
                     }
 
+                    if (procedureExpression != null)
+                    {
+                        if (procedureInLambda)
+                            return procedureExpression;
+
+                        LispExpression procedureIdentificatorExpression = (LispExpression)children[0].Children[0];
+                        return new LispExpression(ni.Node.Value)
+                        {
+                            procedureIdentificatorExpression,
+                            procedureExpression
+                        };
+                    }
+                    
                     LispExpression e = new LispExpression(ni.Node.Value);
                     e.AddRange(children);
                     return e;
@@ -47,9 +66,9 @@ namespace MiniLisp
             return Eval(foldedLambdas, _mainScope);
         }
 
-        private LispExpressionElement Eval(LispExpression expression, Scope scope)
+        private LispValueElement Eval(LispExpression expression, Scope scope)
         {
-            return Tree<LispExpressionElement>.Fold<LispExpressionElement>(expression,
+            return Tree<LispExpressionElement>.Fold<LispValueElement>(expression,
                 (ni, objects) =>
                 {
                     LispExpressionElement lispElement = ni.Node.Value;
@@ -94,18 +113,21 @@ namespace MiniLisp
 
                     return lispElement is LispProcedure
                         ? ((LispProcedure) lispElement).Copy(scope)
-                        : lispElement;
+                        : (LispValueElement)lispElement;
                 });
         }
 
-        private LispProcedureSignature EvalProcedureSignature(LispExpression signatureExpression)
+        private LispProcedureSignature EvalProcedureSignature(LispExpression signatureExpression, bool procedureIdentifierFirst)
         {
             IEnumerable<LispExpressionElement> elements = signatureExpression.Children.Select(n => n.Value).ToArray();
             LispExpressionElement notIdentifier = elements.FirstOrDefault(e => !(e is LispIdentifier));
             if (notIdentifier != null)
                 throw new LispIdentifierExpectedException(notIdentifier);
 
-            LispIdentifier[] identifiers = elements.Cast<LispIdentifier>().ToArray();
+            if (procedureIdentifierFirst && signatureExpression.Children.Count == 0)
+                throw new LispIdentifierExpectedException();
+
+            LispIdentifier[] identifiers = elements.Skip(procedureIdentifierFirst ? 1 : 0).Cast<LispIdentifier>().ToArray();
 
             var duplicate = identifiers.GroupBy(e => e.Value).FirstOrDefault(g => g.Count() > 1);
             if (duplicate != null)
@@ -115,7 +137,7 @@ namespace MiniLisp
             return new LispProcedureSignature(parameters);
         }
 
-        private LispExpressionElement EvalProcedure(LispExpressionElement[] elements, Scope scope)
+        private LispValueElement EvalProcedure(LispExpressionElement[] elements, Scope scope)
         {
             LispProcedure procedure = ((LispProcedure)elements[0]);
             Scope argumentsScope = new Scope(procedure.Scope ?? scope);
@@ -126,7 +148,7 @@ namespace MiniLisp
             {
                 argumentsScope.Add(procedure.Signature.NamedParameters[i].Identifier, (LispValueElement)arguments[i]);
             }
-            return procedure.Body.Aggregate((LispExpressionElement)null, (a, e) => Eval(e, procedure.Scope));
+            return procedure.Body.Aggregate((LispValueElement)null, (a, e) => Eval(e, procedure.Scope));
         }
 
         private LispValueElement EvalBuiltInProcedure(LispExpressionElement[] elements)

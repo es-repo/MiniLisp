@@ -14,7 +14,7 @@ namespace MiniLisp.Tests
         public void TestEval()
         {
             Evaluator evaluator = new Evaluator();
-            LispExpressionElement evalResult = evaluator.Eval(new LispExpression(new LispNumber(5)));
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispNumber(5)));
             Assert.AreEqual(new LispNumber(5), evalResult);
 
             evalResult = evaluator.Eval(new LispExpression(
@@ -105,7 +105,7 @@ namespace MiniLisp.Tests
         public void TestEvalDefine()
         {
             Evaluator evaluator = new Evaluator();
-            LispExpressionElement evalResult = evaluator.Eval(new LispExpression(new LispDefine())
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispDefine())
             {
                 new LispExpression(new LispIdentifier("d")),
                 new LispExpression(new LispNumber(5)),
@@ -180,6 +180,54 @@ namespace MiniLisp.Tests
         }
 
         [Test]
+        public void TestEvalDefineWithProcSignature()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispDefine())
+            {
+                new LispExpression(new LispProcedureSignatureElement())
+                {
+                    new LispExpression(new LispIdentifier("fn")),
+                    new LispExpression(new LispIdentifier("a")),
+                    new LispExpression(new LispIdentifier("b"))
+                },
+                new LispExpression(new LispEval())
+                {
+                    new LispExpression(new LispIdentifier("*")),
+                    new LispExpression(new LispIdentifier("a")),
+                    new LispExpression(new LispIdentifier("b"))
+                }
+            });
+
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("fn")));
+            Assert.IsInstanceOfType(typeof(LispProcedure), evalResult);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispEval())
+            {
+                new LispExpression(new LispIdentifier("fn")),
+                new LispExpression(new LispNumber(2)),
+                new LispExpression(new LispNumber(3))
+            });
+            Assert.AreEqual(6.0, evalResult.Value);
+        }
+
+        [Test, ExpectedException(typeof(LispIdentifierExpectedException))]
+        public void TestEvalDefineWithProcSignatureAndNoProcId()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispDefine())
+            {
+                new LispExpression(new LispProcedureSignatureElement()),
+                new LispExpression(new LispEval())
+                {
+                    new LispExpression(new LispIdentifier("*")),
+                    new LispExpression(new LispNumber(2)),
+                    new LispExpression(new LispNumber(3))
+                }
+            });
+        }
+
+        [Test]
         public void TestEvalSet()
         {
             Evaluator evaluator = new Evaluator();
@@ -188,7 +236,7 @@ namespace MiniLisp.Tests
                 new LispExpression(new LispIdentifier("d")),
                 new LispExpression(new LispNumber(5)),
             });
-            LispExpressionElement evalResult = evaluator.Eval(new LispExpression(new LispSet())
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispSet())
             {
                 new LispExpression(new LispIdentifier("d")),
                 new LispExpression(new LispNumber(3)),
@@ -229,7 +277,7 @@ namespace MiniLisp.Tests
                 }
             };
 
-            LispExpressionElement evalResult = evaluator.Eval(lambdaExpression);
+            LispValueElement evalResult = evaluator.Eval(lambdaExpression);
             Assert.IsTrue(evalResult is LispProcedure);
 
             evalResult = evaluator.Eval(new LispExpression(new LispEval()) { lambdaExpression });

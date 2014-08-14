@@ -1,17 +1,12 @@
 namespace MiniLisp.Expressions
 {
-    public class LispIdentifier : LispExpressionElement
+    public class LispIdentifier : LispValueElement
     {
-        public string Value { get; private set; }
+        public new string Value { get { return (string)base.Value; } }
 
-        public LispIdentifier(string value)
+        public LispIdentifier(string value) 
+            : base(value)
         {
-            Value = value;
-        }
-
-        public override string ToString()
-        {
-            return Value;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace MiniLisp
         {
             IEnumerable<string> i = Enumerable.Repeat(expression.Value.ToString(), expression.Value.ToString() == "" ? 0 : 1).Concat(expression.Select(e => e.ToString()));
             string s = string.Join(" ", i.ToArray());
-            if (!(expression.Value is LispValueElement || expression.Value is LispIdentifier))
+            if (!(expression.Value is LispValueElement))
                 s = "(" + s + ")";
             return s;
         }

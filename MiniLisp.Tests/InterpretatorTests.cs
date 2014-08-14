@@ -98,7 +98,22 @@ d
 (d 15)", "#<procedure:d> 81")]
 
         [Row(@"(define fn (lambda () (define fn2 (lambda () (define mul *) mul)) mul)) (fn)", "", ExpectedException = typeof(LispUnboundIdentifierException))]
-        
+
+        [Row(@"(define fn (lambda () (fn))) 3", "3")]
+
+        [Row(@"(define (fn fn) fn) (fn 3)", "3")]
+
+        [Row(@"
+(define (mul a) 
+  (lambda (b) (* a b)))
+
+(define mul2 (mul 2))
+(define mul3 (mul 4))
+(set! mul3 (mul 3))
+
+(mul2 4)
+(mul3 4)", "8 12")]
+
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
