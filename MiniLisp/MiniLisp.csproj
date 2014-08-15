@@ -41,7 +41,10 @@
   <ItemGroup>
     <Compile Include="DefaultDefenitions.cs" />
     <Compile Include="Exceptions\LispDuplicateIdentifierDefinitionException.cs" />
+    <Compile Include="Exceptions\LispIfPartExpectedException.cs" />
+    <Compile Include="Exceptions\LispIfTooManyPartsException.cs" />
     <Compile Include="Exceptions\LispProcedureDuplicateParameterException.cs" />
+    <Compile Include="Expressions\LispIf.cs" />
     <Compile Include="Expressions\LispProcedureParameter.cs" />
     <Compile Include="Expressions\LispSet.cs" />
     <Compile Include="Scope.cs" />

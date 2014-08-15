@@ -57,7 +57,15 @@ namespace MiniLisp
                             procedureExpression
                         };
                     }
-                    
+
+                    if (ni.Node.Value is LispIf)
+                    {
+                        IEnumerable<LispExpression> ifProcedures = children.Select(c => new LispExpression(new LispProcedure(new LispProcedureSignature(), new[] { c })));
+                        LispExpression ifExpression = new LispExpression(ni.Node.Value);
+                        ifExpression.AddRange(ifProcedures);
+                        return ifExpression;
+                    }
+
                     LispExpression e = new LispExpression(ni.Node.Value);
                     e.AddRange(children);
                     return e;
@@ -88,14 +96,13 @@ namespace MiniLisp
                     }
                     
                     if (lispElement is LispDefine)
-                    {
                         return EvalDefine(objects, scope);
-                    }
 
                     if (lispElement is LispSet)
-                    {
                         return EvalSet(objects, scope);
-                    }
+
+                    if (lispElement is LispIf)
+                        return EvalIf(objects, scope);
 
                     if (objects != null && objects.Length > 0)
                         throw new InvalidOperationException("Expected no arguments.");
@@ -141,7 +148,7 @@ namespace MiniLisp
         {
             LispProcedure procedure = ((LispProcedure)elements[0]);
             Scope argumentsScope = new Scope(procedure.Scope ?? scope);
-            procedure = ((LispProcedure)elements[0]).Copy(new Scope(argumentsScope));
+            procedure = procedure.Copy(new Scope(argumentsScope));
             LispExpressionElement[] arguments = elements.Skip(1).ToArray();
             LispProcedureContractVerification.Assert(procedure.Signature, arguments);
             for (int i = 0; i < arguments.Length; i++)
@@ -189,6 +196,30 @@ namespace MiniLisp
         private LispVoid EvalSet(LispExpressionElement[] elements, Scope scope)
         {
             return EvalDefineOrSet(elements, scope, false);
+        }
+
+        private LispValueElement EvalIf(LispExpressionElement[] elements, Scope scope)
+        {
+            if (elements.Any(e => !(e is LispProcedure)))
+                throw new InvalidOperationException("Procedures are expected in \"if\" context");
+
+            if (elements.Length < 1)
+                throw new LispIfPartExpectedException("test");
+
+            if (elements.Length < 2)
+                throw new LispIfPartExpectedException("then");
+
+            if (elements.Length < 3)
+                throw new LispIfPartExpectedException("else");
+
+            if (elements.Length > 3)
+                throw new LispIfTooManyPartsException(elements.Length);
+
+            LispValueElement testResult = EvalProcedure(new[] {elements[0]}, scope);
+
+            return (testResult is LispBoolean) && ((LispBoolean) testResult).Value == false
+                ? EvalProcedure(new[] {elements[2]}, scope)
+                : EvalProcedure(new[] {elements[1]}, scope);
         }
     }
 }

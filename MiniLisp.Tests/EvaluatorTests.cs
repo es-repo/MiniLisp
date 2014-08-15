@@ -422,5 +422,42 @@ namespace MiniLisp.Tests
 
             evaluator.Eval(expr);
         }
+
+        [Test]
+        public void TestEvalIf()
+        {
+            Evaluator evaluator = new Evaluator();
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispIf())
+            {
+                new LispExpression((new LispBoolean(true))),
+                new LispExpression((new LispNumber(5))),
+                new LispExpression((new LispNumber(3)))                
+            });
+
+            Assert.AreEqual(5.0, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispIf())
+            {
+                new LispExpression((new LispBoolean(false))),
+                new LispExpression((new LispNumber(5))),
+                new LispExpression((new LispNumber(3)))                
+            });
+
+            Assert.AreEqual(3.0, evalResult.Value);
+        }
+
+        [Test]
+        [Row(0, ExpectedException = typeof(LispIfPartExpectedException))]
+        [Row(1, ExpectedException = typeof(LispIfPartExpectedException))]
+        [Row(2, ExpectedException = typeof(LispIfPartExpectedException))]
+        [Row(4, ExpectedException = typeof(LispIfTooManyPartsException))]
+        public void TestIfWithDifferentPartsCount(int partsCount)
+        {
+            Evaluator evaluator = new Evaluator();
+            LispExpression ifExpression = new LispExpression(new LispIf());
+            IEnumerable<LispExpression> parts = Enumerable.Repeat(0, partsCount).Select(i => new LispExpression(new LispNumber(5)));
+            ifExpression.AddRange(parts);
+            evaluator.Eval(ifExpression);
+        }
     }
 }

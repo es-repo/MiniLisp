@@ -39,6 +39,7 @@ namespace MiniLisp.Tests
         [Row("(define d 3) (set! d 4)", "(define d 3) (set! d 4)")]
         [Row("(define (fn a b) (* a b))", "(define (fn a b) (* a b))")]
         [Row("'(define (fn a b) (* a b))", "'(define (fn a b) (* a b))")]
+        [Row("(if #f 5 3)", "(if #f 5 3)")]
         [Row("(", "", ExpectedException = typeof(LispParsingException))]
         [Row("((())", "", ExpectedException = typeof(LispParsingException))]
         [Row("(define sqr3 (* 3 3) ", "", ExpectedException = typeof(LispParsingException))]

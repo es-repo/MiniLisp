@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using MiniLisp.Expressions;
 
@@ -27,11 +28,39 @@ namespace MiniLisp
                 new LispProcedureSignature(null, typeof(LispNumber), 2),
                 MathEqaul));
 
+            scope.Add("!=", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispNumber), 2),
+                MathNotEqaul));
+
+            scope.Add(">", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispNumber), 2),
+                MathMore));
+
+            scope.Add(">=", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispNumber), 2),
+                MathMoreEqual));
+
+            scope.Add("<", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispNumber), 2),
+                MathLess));
+
+            scope.Add("<=", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispNumber), 2),
+                MathLessEqual));
+
             scope.Add("not", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispBoolean), 1),
                 Not));
 
-            // TODO: cos sin tan atan log exp sqrt > < >= <= != string? boolean? number? equal if
+            scope.Add("or", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispBoolean), 1),
+                Or));
+
+            scope.Add("and", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispBoolean), 1),
+                And));
+
+            // TODO: cos sin tan atan log exp sqrt string? boolean? number? equal
         }
 
         private LispValueElement Sum(LispValueElement[] arguments)
@@ -61,13 +90,53 @@ namespace MiniLisp
 
         private LispValueElement MathEqaul(LispValueElement[] arguments)
         {
+            return MathConditional(arguments, (f, n) => f == n);
+        }
+
+        private LispValueElement MathNotEqaul(LispValueElement[] arguments)
+        {
+            return MathConditional(arguments, (f, n) => f != n);
+        }
+
+        private LispValueElement MathMore(LispValueElement[] arguments)
+        {
+            return MathConditional(arguments, (f, n) => f > n);
+        }
+
+        private LispValueElement MathMoreEqual(LispValueElement[] arguments)
+        {
+            return MathConditional(arguments, (f, n) => f >= n);
+        }
+
+        private LispValueElement MathLess(LispValueElement[] arguments)
+        {
+            return MathConditional(arguments, (f, n) => f < n);
+        }
+
+        private LispValueElement MathLessEqual(LispValueElement[] arguments)
+        {
+            return MathConditional(arguments, (f, n) => f <= n);
+        }
+
+        private LispValueElement MathConditional(LispValueElement[] arguments, Func<double, double, bool> predicate)
+        {
             double first = ((LispNumber)arguments[0]).Value;
-            return new LispBoolean(arguments.Skip(1).Select(o => ((LispNumber)o).Value).All(n => n == first));
+            return new LispBoolean(arguments.Skip(1).Select(o => ((LispNumber)o).Value).All(n => predicate(first, n)));
         }
 
         private LispValueElement Not(LispValueElement[] arguments)
         {
             return new LispBoolean(!((LispBoolean)arguments[0]).Value);
+        }
+
+        private LispValueElement Or(LispValueElement[] arguments)
+        {
+            return new LispBoolean(arguments.Aggregate(false, (r, a) => r || ((LispBoolean)a).Value));
+        }
+
+        private LispValueElement And(LispValueElement[] arguments)
+        {
+            return new LispBoolean(arguments.Aggregate(true, (r, a) => r && ((LispBoolean)a).Value));
         }
     }
 }
