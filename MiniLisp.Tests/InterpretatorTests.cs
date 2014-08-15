@@ -114,6 +114,14 @@ d
 (mul2 4)
 (mul3 4)", "8 12")]
 
+        [Row(@"
+(define (fib n)
+  (if (< n 2) 
+      n
+      (+ (fib (- n 1)) (fib (- n 2)))))
+
+(fib 0) (fib 1) (fib 2) (fib 3) (fib 4) (fib 5) (fib 6) (fib 7) (fib 8)", "0 1 1 2 3 5 8 13 21")]
+
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
@@ -126,8 +134,15 @@ d
         [Row("(- 2) (- 2 3)", "-2 -1")]
         [Row("(* 2) (* 2 3)", "2 6")]
         [Row("(/ 2) (/ 3 2)", "2 1.5")]
-        [Row("(= 2 2) (= 3 2)", "#t #f")]
+        [Row("(= 2 2 2) (= 3 3 2)", "#t #f")]
+        [Row("(!= 2 2 2) (!= 3 3 2) (!= 3 4 4)", "#f #f #t")]
+        [Row("(> 2 2 2) (> 3 2 4) (> 3 1 2)", "#f #f #t")]
+        [Row("(>= 2 2 3) (>= 3 3 3) (> 3 1 2)", "#f #t #t")]
+        [Row("(< 2 2 2) (< 3 2 4) (< 3 6 5)", "#f #f #t")]
+        [Row("(<= 2 2 1) (<= 3 3 3) (< 3 4 5)", "#f #t #t")]
         [Row("(not #f) (not true)", "#t #f")]
+        [Row("(or #f) (or #t) (or true true false) (or true true)", "#f #t #t #t")]
+        [Row("(and #f) (and #t) (and true true false) (and true true)", "#f #t #f #t")]
         public void TestDefaults(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
@@ -137,6 +152,7 @@ d
 
         [Test]
         [Row("pi", "3.14159265358979")]
+        [Row("(fact 7)", "5040")]
         public void TestStdLib(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();

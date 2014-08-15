@@ -6,14 +6,14 @@ namespace MiniLisp
 {
     public class Scope
     {
-        private readonly IDictionary<string, LispValueElement> _defenitions;
+        private readonly IDictionary<string, LispValueElement> _variables;
 
         public Scope Parent { get; private set; }
 
         public Scope(Scope parent = null)
         {
             Parent = parent; 
-            _defenitions = new Dictionary<string, LispValueElement>();
+            _variables = new Dictionary<string, LispValueElement>();
         }
 
         public LispValueElement this[LispIdentifier identifier]
@@ -26,8 +26,8 @@ namespace MiniLisp
         {
             get
             {
-                if (_defenitions.ContainsKey(identifier))
-                    return _defenitions[identifier];
+                if (_variables.ContainsKey(identifier))
+                    return _variables[identifier];
                 if (Parent != null)
                     return Parent[identifier];
 
@@ -35,10 +35,10 @@ namespace MiniLisp
             }
             set
             {
-                if (!_defenitions.ContainsKey(identifier))
+                if (!_variables.ContainsKey(identifier))
                     throw new LispUnboundIdentifierException(identifier);
 
-                _defenitions[identifier] = value;
+                _variables[identifier] = value;
                 ElementAdded(identifier, value);
             }
         }
@@ -50,9 +50,9 @@ namespace MiniLisp
 
         public void Add(string identifier, LispValueElement element)
         {
-            if (_defenitions.ContainsKey(identifier))
+            if (_variables.ContainsKey(identifier))
                 throw new LispDuplicateIdentifierDefinitionException(identifier);
-            _defenitions.Add(identifier, element);
+            _variables.Add(identifier, element);
             ElementAdded(identifier, element);
         }
 

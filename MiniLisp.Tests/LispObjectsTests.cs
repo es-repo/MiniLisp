@@ -72,13 +72,5 @@ namespace MiniLisp.Tests
                 new LispExpression(new LispNumber(3))
             }))).ToString());
         }
-
-        [Test]
-        public void TestEquals()
-        {
-            Assert.AreEqual(new LispNumber(5), new LispNumber(5));
-            Assert.AreEqual(new LispString("ab"), new LispString("ab"));
-            Assert.AreEqual(new LispBoolean(true), new LispBoolean(true));
-        }
     }
 }

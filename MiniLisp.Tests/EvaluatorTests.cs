@@ -15,14 +15,14 @@ namespace MiniLisp.Tests
         {
             Evaluator evaluator = new Evaluator();
             LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispNumber(5)));
-            Assert.AreEqual(new LispNumber(5), evalResult);
+            Assert.AreEqual(5.0, evalResult.Value);
 
             evalResult = evaluator.Eval(new LispExpression(
                 new LispEval())
                 {
                     new LispExpression(new LispIdentifier("+")), new LispExpression(new LispNumber(4)), new LispExpression(new LispNumber(8))
                 });
-            Assert.AreEqual(new LispNumber(12), evalResult);
+            Assert.AreEqual(12.0, evalResult.Value);
 
             evalResult = evaluator.Eval(new LispExpression(new LispEval())
                 {
@@ -36,7 +36,7 @@ namespace MiniLisp.Tests
                             new LispExpression(new LispIdentifier("/")), new LispExpression(new LispNumber(32)), new LispExpression(new LispNumber(4)) 
                         }
                 });
-            Assert.AreEqual(new LispNumber(20), evalResult);
+            Assert.AreEqual(20.0, evalResult.Value);
         }
 
         [Test, ExpectedException(typeof(LispProcedureExpectedException))]
@@ -113,7 +113,7 @@ namespace MiniLisp.Tests
             Assert.IsTrue(evalResult is LispVoid);
 
             evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("d")));
-            Assert.AreEqual(new LispNumber(5), evalResult);
+            Assert.AreEqual(5.0, evalResult.Value);
 
             evaluator.Eval(new LispExpression(new LispDefine())
             {                
@@ -122,7 +122,7 @@ namespace MiniLisp.Tests
             });
 
             evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("e")));
-            Assert.AreEqual(new LispNumber(5), evalResult);
+            Assert.AreEqual(5.0, evalResult.Value);
 
             evaluator.Eval(new LispExpression(new LispDefine())
             {
@@ -137,7 +137,7 @@ namespace MiniLisp.Tests
                 new LispExpression(new LispIdentifier("sqrt")),
                 new LispExpression(new LispNumber(9))
             });
-            Assert.AreEqual(new LispNumber(3), evalResult);
+            Assert.AreEqual(3.0, evalResult.Value);
         }
 
         [Test, ExpectedException(typeof(LispIdentifierExpectedException))]
@@ -244,7 +244,7 @@ namespace MiniLisp.Tests
             Assert.IsTrue(evalResult is LispVoid);
 
             evalResult = evaluator.Eval(new LispExpression(new LispIdentifier("d")));
-            Assert.AreEqual(new LispNumber(3), evalResult);
+            Assert.AreEqual(3.0, evalResult.Value);
         }
 
         [Test]
@@ -281,7 +281,7 @@ namespace MiniLisp.Tests
             Assert.IsTrue(evalResult is LispProcedure);
 
             evalResult = evaluator.Eval(new LispExpression(new LispEval()) { lambdaExpression });
-            Assert.AreEqual(new LispNumber(15), evalResult);
+            Assert.AreEqual(15.0, evalResult.Value);
             
             evaluator = new Evaluator();
             evalResult = evaluator.Eval(new LispExpression(new LispEval())
@@ -295,7 +295,7 @@ namespace MiniLisp.Tests
                     }    
                 }
             });
-            Assert.AreEqual(new LispNumber(15), evalResult);
+            Assert.AreEqual(15.0, evalResult.Value);
         }
 
         [Test]
