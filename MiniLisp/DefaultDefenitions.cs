@@ -59,8 +59,12 @@ namespace MiniLisp
             scope.Add("and", new LispBuiltInProcedure(
                 new LispProcedureSignature(null, typeof(LispBoolean), 1),
                 And));
-
-            // TODO: cos sin tan atan log exp sqrt string? boolean? number? equal
+            
+            scope.Add("equal?", new LispBuiltInProcedure(
+                new LispProcedureSignature(new []
+                {
+                    new LispProcedureParameter("", typeof(LispValueElement)), new LispProcedureParameter("", typeof(LispValueElement))
+                }), Equal));
         }
 
         private LispValueElement Sum(LispValueElement[] arguments)
@@ -137,6 +141,12 @@ namespace MiniLisp
         private LispValueElement And(LispValueElement[] arguments)
         {
             return new LispBoolean(arguments.Aggregate(true, (r, a) => r && ((LispBoolean)a).Value));
+        }
+
+        private LispValueElement Equal(LispValueElement[] arguments)
+        {
+            bool r = arguments[0].GetType() == arguments[1].GetType() && arguments[0].Value.Equals(arguments[1].Value);
+            return new LispBoolean(r);
         }
     }
 }

@@ -143,6 +143,7 @@ d
         [Row("(not #f) (not true)", "#t #f")]
         [Row("(or #f) (or #t) (or true true false) (or true true)", "#f #t #t #t")]
         [Row("(and #f) (and #t) (and true true false) (and true true)", "#f #t #f #t")]
+        [Row("(equal? 1 1) (equal? \"ab\" \"ab\") (equal? 2 1) (equal? #t 1)", "#t #t #f #f")]
         public void TestDefaults(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
@@ -153,6 +154,8 @@ d
         [Test]
         [Row("pi", "3.14159265358979")]
         [Row("(fact 7)", "5040")]
+        [Row("(define p (cons 1 2)) (car p) (cdr p)", "1 2")]
+        [Row("(sqrt 81)", "9.00001129879022")]
         public void TestStdLib(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
