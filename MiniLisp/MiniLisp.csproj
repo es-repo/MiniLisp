@@ -40,10 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultDefenitions.cs" />
+    <Compile Include="Exceptions\LispCondTestValueExressionExpectedException.cs" />
     <Compile Include="Exceptions\LispDuplicateIdentifierDefinitionException.cs" />
     <Compile Include="Exceptions\LispIfPartExpectedException.cs" />
     <Compile Include="Exceptions\LispIfTooManyPartsException.cs" />
     <Compile Include="Exceptions\LispProcedureDuplicateParameterException.cs" />
+    <Compile Include="Expressions\LispCond.cs" />
     <Compile Include="Expressions\LispIf.cs" />
     <Compile Include="Expressions\LispProcedureParameter.cs" />
     <Compile Include="Expressions\LispSet.cs" />
@@ -64,7 +66,7 @@
     <Compile Include="Expressions\LispLambda.cs" />
     <Compile Include="Expressions\LispProcedure.cs" />
     <Compile Include="Expressions\LispProcedureBase.cs" />
-    <Compile Include="Expressions\LispProcedureSignatureElement.cs" />
+    <Compile Include="Expressions\LispGroupElement.cs" />
     <Compile Include="Expressions\LispProcedureSignature.cs" />
     <Compile Include="Expressions\LispValueElement.cs" />
     <Compile Include="Expressions\LispVoid.cs" />

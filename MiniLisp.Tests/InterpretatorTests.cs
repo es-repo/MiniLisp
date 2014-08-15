@@ -122,6 +122,11 @@ d
 
 (fib 0) (fib 1) (fib 2) (fib 3) (fib 4) (fib 5) (fib 6) (fib 7) (fib 8)", "0 1 1 2 3 5 8 13 21")]
 
+        [Row(@"
+(define d 2)
+(if #t (set! d 5 ) (* 3 4))
+d", "5")]
+
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();

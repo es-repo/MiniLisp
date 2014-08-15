@@ -69,8 +69,8 @@ namespace MiniLisp
                     if (lispElement == null)
                     {
                         LispExpression prevExpr = stack.Count > 0 ? stack.Peek() : null;
-                        bool isProcedureSignature = prevExpr != null && prevExpr.Children.Count == 0 && (prevExpr.Value is LispLambda || prevExpr.Value is LispDefine);
-                        lispElement = isProcedureSignature ? (LispExpressionElement) new LispProcedureSignatureElement() : new LispEval();
+                        bool isGroup = prevExpr != null && prevExpr.Children.Count == 0 && (prevExpr.Value is LispLambda || prevExpr.Value is LispDefine);
+                        lispElement = isGroup ? (LispExpressionElement) new LispGroupElement() : new LispEval();
                     }
                     else
                     {

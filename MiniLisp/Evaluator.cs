@@ -25,7 +25,7 @@ namespace MiniLisp
                     bool procedureInLambda = ni.Node.Value is LispLambda;
                     if (procedureInLambda)
                     {
-                        if (children.Length < 1 || !(children[0].Value is LispProcedureSignatureElement))
+                        if (children.Length < 1 || !(children[0].Value is LispGroupElement))
                             throw new LispProcedureSignatureExpressionExpectedException(children.Length > 0
                                 ? children[0].Value
                                 : null);
@@ -33,7 +33,7 @@ namespace MiniLisp
 
                     LispExpression procedureExpression = null;
                     bool procedureInLambdaOrDefine = procedureInLambda || 
-                        ni.Node.Value is LispDefine && children.Length > 0 && children[0].Value is LispProcedureSignatureElement;
+                        ni.Node.Value is LispDefine && children.Length > 0 && children[0].Value is LispGroupElement;
                     if (procedureInLambdaOrDefine)
                     {
                         LispProcedureSignature signature = EvalProcedureSignature(children[0], !procedureInLambda);
@@ -64,6 +64,21 @@ namespace MiniLisp
                         LispExpression ifExpression = new LispExpression(ni.Node.Value);
                         ifExpression.AddRange(ifProcedures);
                         return ifExpression;
+                    }
+
+                    if (ni.Node.Value is LispCond)
+                    {
+                        if (children.Any(c => !(c.Value is LispGroupElement)) || children.Any(c => c.Children.Count == 0))
+                            throw new LispCondTestValueExressionExpectedException();
+
+                        //LispExpression condExpression = new LispExpression(ni.Node.Value);
+                        //foreach (LispExpression gropExpression in children)
+                        //{
+                        //    LispExpression testExpression = new LispExpression(new LispProcedure(
+                        //        new LispProcedureSignature(), new [] {gropExpression[0]}));
+    
+                        //}
+                        
                     }
 
                     LispExpression e = new LispExpression(ni.Node.Value);

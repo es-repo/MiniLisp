@@ -9,8 +9,8 @@
             get { return (LispExpression[])Value; }
         }
 
-        public LispProcedure(LispProcedureSignature signature, LispExpression[] value, Scope scope = null)
-            : base(signature, value)
+        public LispProcedure(LispProcedureSignature signature, LispExpression[] body, Scope scope = null)
+            : base(signature, body)
         {
             Scope = scope;
         }

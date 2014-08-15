@@ -50,7 +50,7 @@ namespace MiniLisp.Tests
         public void TestNotIdenifier()
         {
             Evaluator evaluator = new Evaluator();
-            evaluator.Eval(new LispExpression( new LispEval()) { new LispExpression(new LispNumber(5)) });
+            evaluator.Eval(new LispExpression(new LispEval()) { new LispExpression(new LispNumber(5)) });
         }
 
         [Test, ExpectedException(typeof(LispUnboundIdentifierException))]
@@ -185,7 +185,7 @@ namespace MiniLisp.Tests
             Evaluator evaluator = new Evaluator();
             evaluator.Eval(new LispExpression(new LispDefine())
             {
-                new LispExpression(new LispProcedureSignatureElement())
+                new LispExpression(new LispGroupElement())
                 {
                     new LispExpression(new LispIdentifier("fn")),
                     new LispExpression(new LispIdentifier("a")),
@@ -217,7 +217,7 @@ namespace MiniLisp.Tests
             Evaluator evaluator = new Evaluator();
             evaluator.Eval(new LispExpression(new LispDefine())
             {
-                new LispExpression(new LispProcedureSignatureElement()),
+                new LispExpression(new LispGroupElement()),
                 new LispExpression(new LispEval())
                 {
                     new LispExpression(new LispIdentifier("*")),
@@ -249,12 +249,12 @@ namespace MiniLisp.Tests
 
         [Test]
         public void TestEvalLambda()
-        {            
+        {
             Evaluator evaluator = new Evaluator();
 
             LispExpression lambdaExpression = new LispExpression(new LispLambda())
             {
-                new LispExpression(new LispProcedureSignatureElement()),
+                new LispExpression(new LispGroupElement()),
 
                 new LispExpression(new LispDefine())
                 {
@@ -282,7 +282,7 @@ namespace MiniLisp.Tests
 
             evalResult = evaluator.Eval(new LispExpression(new LispEval()) { lambdaExpression });
             Assert.AreEqual(15.0, evalResult.Value);
-            
+
             evaluator = new Evaluator();
             evalResult = evaluator.Eval(new LispExpression(new LispEval())
             {
@@ -290,7 +290,7 @@ namespace MiniLisp.Tests
                 {
                     new LispExpression(new LispLambda())
                     {
-                        new LispExpression(new LispProcedureSignatureElement()),
+                        new LispExpression(new LispGroupElement()),
                         lambdaExpression
                     }    
                 }
@@ -305,7 +305,7 @@ namespace MiniLisp.Tests
             LispExpression procedureExpression = new LispExpression(
                 new LispLambda())
                 {
-                    new LispExpression(new LispProcedureSignatureElement())
+                    new LispExpression(new LispGroupElement())
                     {
                         new LispExpression(new LispIdentifier("a")),
                         new LispExpression(new LispIdentifier("b"))
@@ -340,7 +340,7 @@ namespace MiniLisp.Tests
             LispExpression procedureExpression = new LispExpression(
                 new LispLambda())
                 {
-                    new LispExpression(new LispProcedureSignatureElement())
+                    new LispExpression(new LispGroupElement())
                 };
 
             evaluator.Eval(new LispExpression(new LispEval()) { procedureExpression });
@@ -366,7 +366,7 @@ namespace MiniLisp.Tests
             LispExpression procedureExpression = new LispExpression(
                 new LispLambda())
                 {
-                    new LispExpression(new LispProcedureSignatureElement())
+                    new LispExpression(new LispGroupElement())
                     {
                         new LispExpression(new LispIdentifier("a")),
                         new LispExpression(new LispString("b"))
@@ -383,7 +383,7 @@ namespace MiniLisp.Tests
             LispExpression procedureExpression = new LispExpression(
                 new LispLambda())
                 {
-                    new LispExpression(new LispProcedureSignatureElement())
+                    new LispExpression(new LispGroupElement())
                     {
                         new LispExpression(new LispIdentifier("a")),
                         new LispExpression(new LispIdentifier("b")),
@@ -405,7 +405,7 @@ namespace MiniLisp.Tests
             LispExpression procedureExpression = new LispExpression(
                 new LispLambda())
                 {
-                    new LispExpression(new LispProcedureSignatureElement())
+                    new LispExpression(new LispGroupElement())
                     {
                         new LispExpression(new LispIdentifier("a")),
                         new LispExpression(new LispIdentifier("b"))
@@ -458,6 +458,34 @@ namespace MiniLisp.Tests
             IEnumerable<LispExpression> parts = Enumerable.Repeat(0, partsCount).Select(i => new LispExpression(new LispNumber(5)));
             ifExpression.AddRange(parts);
             evaluator.Eval(ifExpression);
+        }
+
+        [Test, ExpectedException(typeof(LispCondTestValueExressionExpectedException))]
+        public void TestCondWithNonGroupChildren()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispNumber(2))
+                },  
+                new LispExpression(new LispNumber(5))
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispCondTestValueExressionExpectedException))]
+        public void TestCondWithEmptyGroupChildren()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispNumber(2))
+                },  
+                new LispExpression(new LispGroupElement())
+            });
         }
     }
 }

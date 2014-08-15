@@ -23,9 +23,10 @@ namespace MiniLisp
                 {typeof(LispDefine), "define"},
                 {typeof(LispSet), "set!"},
                 {typeof(LispIf), "if"},
+                {typeof(LispCond), "cond"},
                 {typeof(LispLambda), "lambda"},
                 {typeof(LispEval), ""},
-                {typeof(LispProcedureSignatureElement), ""},
+                {typeof(LispGroupElement), ""},
             };
         }
 

@@ -35,11 +35,15 @@ namespace MiniLisp
             }
             set
             {
-                if (!_variables.ContainsKey(identifier))
+                if(_variables.ContainsKey(identifier))
+                {
+                    _variables[identifier] = value;
+                    ElementAdded(identifier, value);
+                }
+                else if (Parent != null)
+                    Parent[identifier] = value;
+                else
                     throw new LispUnboundIdentifierException(identifier);
-
-                _variables[identifier] = value;
-                ElementAdded(identifier, value);
             }
         }
 
