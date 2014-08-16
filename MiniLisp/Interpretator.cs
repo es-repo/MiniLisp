@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MiniLisp.Expressions;
 
 namespace MiniLisp
 {
@@ -14,12 +15,12 @@ namespace MiniLisp
             foreach (var e in ReadFromFile("StdLib.lsp"));
         }
 
-        public IEnumerable<LispExpressionElement> ReadFromFile(string filePath)
+        public IEnumerable<LispValueElement> ReadFromFile(string filePath)
         {
             return Read(File.ReadAllText(filePath));
         }
 
-        public IEnumerable<LispExpressionElement> Read(string input)
+        public IEnumerable<LispValueElement> Read(string input)
         {
             IEnumerable<LispExpression> expressions = Parser.Parse(input);
             return expressions.Select(e => _evaluator.Eval(e));

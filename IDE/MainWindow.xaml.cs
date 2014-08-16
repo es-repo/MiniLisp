@@ -25,21 +25,24 @@ namespace IDE
             }
         }
 
+        
         private void Run()
         {
             TextRange outputText = new TextRange(_outputTextBox.Document.ContentStart, _outputTextBox.Document.ContentEnd);
             try
             {
+                string code = new TextRange(_inputTextBox.Document.ContentStart, _inputTextBox.Document.ContentEnd).Text;
+                
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-            
-                string code = new TextRange(_inputTextBox.Document.ContentStart, _inputTextBox.Document.ContentEnd).Text;
-                string result = string.Join(Environment.NewLine,
-                    new Interpretator().Read(code).Where(o => !(o is LispVoid)). Select(o => o.ToString()).ToArray());
-                outputText.Text = result;
+                Interpretator interpretator = new Interpretator();
+                LispValueElement[] result = interpretator.Read(code).ToArray();
+                stopwatch.Stop();
+
+                string output = string.Join(Environment.NewLine, result.Where(o => !(o is LispVoid)).Select(o => o.ToString()).ToArray());
+                outputText.Text = output;
                 outputText.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
 
-                stopwatch.Stop();
                 _outputTextBox.AppendText("\n\nTime: " + stopwatch.Elapsed);
             }
             catch (LispException lispException)
