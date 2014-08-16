@@ -487,5 +487,66 @@ namespace MiniLisp.Tests
                 new LispExpression(new LispGroupElement())
             });
         }
+
+        [Test]
+        public void TestEvalCond()
+        {
+            Evaluator evaluator = new Evaluator();
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispCond()));
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(false))
+                }
+            });
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(false)),
+                    new LispExpression(new LispNumber(5))
+                }
+            });
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(true))
+                }
+            });
+            Assert.AreEqual(true, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(true)),
+                    new LispExpression(new LispNumber(5))
+                }
+            });
+            Assert.AreEqual(5.0, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(false)),
+                    new LispExpression(new LispNumber(5))
+                },
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(true)),
+                    new LispExpression(new LispNumber(3))
+                }
+            });
+            Assert.AreEqual(3.0, evalResult.Value);
+        }
     }
 }

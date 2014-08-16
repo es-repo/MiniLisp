@@ -63,14 +63,19 @@ namespace MiniLisp
                             case "if":
                                 lispElement = new LispIf();
                                 break;
+
+                            case "cond":
+                                lispElement = new LispCond();
+                                break;
                         }
                     }
 
                     if (lispElement == null)
                     {
                         LispExpression prevExpr = stack.Count > 0 ? stack.Peek() : null;
-                        bool isGroup = prevExpr != null && prevExpr.Children.Count == 0 && (prevExpr.Value is LispLambda || prevExpr.Value is LispDefine);
-                        lispElement = isGroup ? (LispExpressionElement) new LispGroupElement() : new LispEval();
+                        bool isLambdaOrDefineGroup = prevExpr != null && prevExpr.Children.Count == 0 && (prevExpr.Value is LispLambda || prevExpr.Value is LispDefine);
+                        bool isCondGroup = prevExpr != null && prevExpr.Value is LispCond;
+                        lispElement = isLambdaOrDefineGroup || isCondGroup ? (LispExpressionElement)new LispGroupElement() : new LispEval();
                     }
                     else
                     {

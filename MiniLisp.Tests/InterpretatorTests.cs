@@ -127,6 +127,15 @@ d
 (if #t (set! d 5 ) (* 3 4))
 d", "5")]
 
+        [Row(@"(cond (#t) (6))", "#t")]
+
+        [Row(@"(define d 1)
+(cond (#t) (#f 3))
+(cond (#t (set! d 3) (set! d 5) 7) (#f (set! d 11)))
+d
+(cond (#f (set! d 3) (set! d 5) 7) ((set! d 11)))
+d", "#t 7 5 11")]
+
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();

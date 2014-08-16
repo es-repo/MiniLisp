@@ -60,9 +60,22 @@ namespace MiniLisp
 
                     if (ni.Node.Value is LispIf)
                     {
-                        IEnumerable<LispExpression> ifProcedures = children.Select(c => new LispExpression(new LispProcedure(new LispProcedureSignature(), new[] { c })));
-                        LispExpression ifExpression = new LispExpression(ni.Node.Value);
-                        ifExpression.AddRange(ifProcedures);
+                        if (children.Length < 1)
+                            throw new LispIfPartExpectedException("test");
+
+                        if (children.Length < 2)
+                            throw new LispIfPartExpectedException("then");
+
+                        if (children.Length < 3)
+                            throw new LispIfPartExpectedException("else");
+
+                        if (children.Length > 3)
+                            throw new LispIfTooManyPartsException(children.Length);
+
+                        LispExpression ifExpression = new LispExpression(new LispIf(
+                            new LispProcedure(new LispProcedureSignature(), new[] { children[0] }),
+                            new LispProcedure(new LispProcedureSignature(), new[] { children[1] }),
+                            new LispProcedure(new LispProcedureSignature(), new[] { children[2] })));
                         return ifExpression;
                     }
 
@@ -71,14 +84,13 @@ namespace MiniLisp
                         if (children.Any(c => !(c.Value is LispGroupElement)) || children.Any(c => c.Children.Count == 0))
                             throw new LispCondTestValueExressionExpectedException();
 
-                        //LispExpression condExpression = new LispExpression(ni.Node.Value);
-                        //foreach (LispExpression gropExpression in children)
-                        //{
-                        //    LispExpression testExpression = new LispExpression(new LispProcedure(
-                        //        new LispProcedureSignature(), new [] {gropExpression[0]}));
-    
-                        //}
-                        
+                        KeyValuePair<LispProcedure, LispProcedure>[] condBody = children.Select(c => new KeyValuePair<LispProcedure, LispProcedure>(
+                            new LispProcedure(new LispProcedureSignature(), new[] {(LispExpression) c[0]}),
+                            c.Count > 1
+                                ? new LispProcedure(new LispProcedureSignature(), c.Skip(1).Cast<LispExpression>().ToArray())
+                                : null)).ToArray();
+
+                        return new LispExpression(new LispCond(condBody));
                     }
 
                     LispExpression e = new LispExpression(ni.Node.Value);
@@ -117,7 +129,10 @@ namespace MiniLisp
                         return EvalSet(objects, scope);
 
                     if (lispElement is LispIf)
-                        return EvalIf(objects, scope);
+                        return EvalIf((LispIf)lispElement, scope);
+
+                    if (lispElement is LispCond)
+                        return EvalCond((LispCond)lispElement, scope);
 
                     if (objects != null && objects.Length > 0)
                         throw new InvalidOperationException("Expected no arguments.");
@@ -213,28 +228,27 @@ namespace MiniLisp
             return EvalDefineOrSet(elements, scope, false);
         }
 
-        private LispValueElement EvalIf(LispExpressionElement[] elements, Scope scope)
-        {
-            if (elements.Any(e => !(e is LispProcedure)))
-                throw new InvalidOperationException("Procedures are expected in \"if\" context");
-
-            if (elements.Length < 1)
-                throw new LispIfPartExpectedException("test");
-
-            if (elements.Length < 2)
-                throw new LispIfPartExpectedException("then");
-
-            if (elements.Length < 3)
-                throw new LispIfPartExpectedException("else");
-
-            if (elements.Length > 3)
-                throw new LispIfTooManyPartsException(elements.Length);
-
-            LispValueElement testResult = EvalProcedure(new[] {elements[0]}, scope);
+        private LispValueElement EvalIf(LispIf ifElem, Scope scope)
+        {            
+            LispValueElement testResult = EvalProcedure(new[] { ifElem.Test }, scope);
 
             return (testResult is LispBoolean) && ((LispBoolean) testResult).Value == false
-                ? EvalProcedure(new[] {elements[2]}, scope)
-                : EvalProcedure(new[] {elements[1]}, scope);
+                ? EvalProcedure(new[] { ifElem.Else }, scope)
+                : EvalProcedure(new[] { ifElem.Then }, scope);
+        }
+        private LispValueElement EvalCond(LispCond condElem, Scope scope)
+        {
+            foreach (var testValue in condElem.Body)
+            {
+                LispValueElement testResult = EvalProcedure(new[] { testValue.Key }, scope);
+                if (!((testResult is LispBoolean) && ((LispBoolean) testResult).Value == false))
+                {
+                    return testValue.Value != null
+                        ? EvalProcedure(new[] {testValue.Value}, scope)
+                        : testResult;
+                }
+            }
+            return new LispVoid();
         }
     }
 }
