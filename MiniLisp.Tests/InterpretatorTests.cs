@@ -158,6 +158,7 @@ d", "#t 7 5 11")]
         [Row("(or #f) (or #t) (or true true false) (or true true)", "#f #t #t #t")]
         [Row("(and #f) (and #t) (and true true false) (and true true)", "#f #t #f #t")]
         [Row("(equal? 1 1) (equal? \"ab\" \"ab\") (equal? 2 1) (equal? #t 1)", "#t #t #f #f")]
+        [Row("(cons (cons 1 2) 3) (car (cons (cons 1 2) 3)) (cdr (cons 2 3))", "((1 . 2) . 3) (1 . 2) 3")]
         public void TestDefaults(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();

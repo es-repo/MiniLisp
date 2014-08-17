@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MiniLisp.Expressions;
 
@@ -65,6 +66,24 @@ namespace MiniLisp
                 {
                     new LispProcedureParameter("", typeof(LispValueElement)), new LispProcedureParameter("", typeof(LispValueElement))
                 }), Equal));
+
+            scope.Add("cons", new LispBuiltInProcedure(
+                new LispProcedureSignature(new[]
+                {
+                    new LispProcedureParameter("", typeof(LispValueElement)), new LispProcedureParameter("", typeof(LispValueElement))
+                }), Cons));
+
+            scope.Add("car", new LispBuiltInProcedure(
+                new LispProcedureSignature(new[]
+                {
+                    new LispProcedureParameter("", typeof(LispPair))
+                }), Car));
+
+            scope.Add("cdr", new LispBuiltInProcedure(
+                new LispProcedureSignature(new[]
+                {
+                    new LispProcedureParameter("", typeof(LispPair))
+                }), Cdr));
         }
 
         private LispValueElement Sum(LispValueElement[] arguments)
@@ -147,6 +166,21 @@ namespace MiniLisp
         {
             bool r = arguments[0].GetType() == arguments[1].GetType() && arguments[0].Value.Equals(arguments[1].Value);
             return new LispBoolean(r);
+        }
+
+        private LispValueElement Cons(LispValueElement[] arguments)
+        {
+            return new LispPair(new KeyValuePair<LispValueElement, LispValueElement>(arguments[0], arguments[1]));
+        }
+
+        private LispValueElement Car(LispValueElement[] arguments)
+        {
+            return ((LispPair)arguments[0]).Value.Key;
+        }
+
+        private LispValueElement Cdr(LispValueElement[] arguments)
+        {
+            return ((LispPair)arguments[0]).Value.Value;
         }
     }
 }
