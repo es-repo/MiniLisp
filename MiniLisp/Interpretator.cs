@@ -12,7 +12,8 @@ namespace MiniLisp
         public Interpretator()
         {
             _evaluator = new Evaluator();
-            foreach (var e in ReadFromFile("StdLib.lsp"));
+            if (File.Exists("StdLib.lsp"))
+                foreach (var e in ReadFromFile("StdLib.lsp"));
         }
 
         public IEnumerable<LispValueElement> ReadFromFile(string filePath)
