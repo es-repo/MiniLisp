@@ -136,6 +136,15 @@ d
 (cond (#f (set! d 3) (set! d 5) 7) ((set! d 11)))
 d", "#t 7 5 11")]
 
+        [Row(@"(let () 3 4)  (let ((a (+ 3 4))) (* a a)) ((let ((a (+ 3 4))) (lambda(b) (* a b))) 3)", "4 49 21")]
+        [Row(@"(let ((x 5)) (define y x) y) (let ((x 5)) (let ((x x)) x))", "5 5")]
+
+        [Row(@"
+(let ((x 5))
+    (let ((x 2)
+          (y x))
+      (cons y x)))", "(5 . 2)")]
+
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();

@@ -548,5 +548,113 @@ namespace MiniLisp.Tests
             });
             Assert.AreEqual(3.0, evalResult.Value);
         }
+
+        [Test]
+        public void TestEvalLet()
+        {
+            Evaluator evaluator = new Evaluator();
+            LispValueElement evalResult = evaluator.Eval(new LispExpression(new LispCond()));
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispGroupElement()),
+                new LispExpression(new LispNumber(3))
+            });
+            Assert.AreEqual(3.0, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispGroupElement())
+                    {
+                        new LispExpression(new LispIdentifier("a")),
+                        new LispExpression(new LispNumber(5))
+                    }
+                },
+                new LispExpression(new LispIdentifier("a"))
+            });
+            Assert.AreEqual(5.0, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispGroupElement())
+                    {
+                        new LispExpression(new LispIdentifier("a")),
+                        new LispExpression(new LispNumber(5))
+                    },
+                    new LispExpression(new LispGroupElement())
+                    {
+                        new LispExpression(new LispIdentifier("b")),
+                        new LispExpression(new LispNumber(3))
+                    }
+                },
+                new LispExpression(new LispEval())
+                {
+                    new LispExpression(new LispIdentifier("+")),    
+                    new LispExpression(new LispIdentifier("a")),    
+                    new LispExpression(new LispIdentifier("b"))
+                }
+            });
+            Assert.AreEqual(8.0, evalResult.Value);
+        }
+
+        [Test, ExpectedException(typeof(LispLetPartExpectedException))]
+        public void TestEmptyLet()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispLet()));
+        }
+
+        [Test, ExpectedException(typeof(LispLetPartExpectedException))]
+        public void TestLetWithoutBindigsPairs()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispBoolean(false))
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispLetPartExpectedException))]
+        public void TestLetWithWithoutBody()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispGroupElement())
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispLetPartExpectedException))]
+        public void TestLetWithBindingPairWithoutIdentifier()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispNumber(5))
+                }
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispLetPartExpectedException))]
+        public void TestLetWithBindingPairWithTooManyBindingExpressions()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispLet())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispIdentifier("d")),
+                    new LispExpression(new LispNumber(5)),
+                    new LispExpression(new LispNumber(5))
+                }
+            });
+        }
     }
 }

@@ -13,8 +13,9 @@ namespace MiniLisp
 
         public Evaluator()
         {
-            _mainScope = new Scope();
-            new DefaultDefenitions().Fill(_mainScope);
+            Scope globalScope = new Scope();
+            new DefaultDefenitions().Fill(globalScope);
+            _mainScope = new Scope(globalScope);
         }
 
         public LispValueElement Eval(LispExpression expression)
@@ -59,39 +60,14 @@ namespace MiniLisp
                     }
 
                     if (ni.Node.Value is LispIf)
-                    {
-                        if (children.Length < 1)
-                            throw new LispIfPartExpectedException("test");
-
-                        if (children.Length < 2)
-                            throw new LispIfPartExpectedException("then");
-
-                        if (children.Length < 3)
-                            throw new LispIfPartExpectedException("else");
-
-                        if (children.Length > 3)
-                            throw new LispIfTooManyPartsException(children.Length);
-
-                        LispExpression ifExpression = new LispExpression(new LispIf(
-                            new LispProcedure(new LispProcedureSignature(), new[] { children[0] }),
-                            new LispProcedure(new LispProcedureSignature(), new[] { children[1] }),
-                            new LispProcedure(new LispProcedureSignature(), new[] { children[2] })));
-                        return ifExpression;
-                    }
+                        return FoldIf(children);
 
                     if (ni.Node.Value is LispCond)
-                    {
-                        if (children.Any(c => !(c.Value is LispGroupElement)) || children.Any(c => c.Children.Count == 0))
-                            throw new LispCondTestValueExressionExpectedException();
+                        return FoldCond(children);
 
-                        KeyValuePair<LispProcedure, LispProcedure>[] condBody = children.Select(c => new KeyValuePair<LispProcedure, LispProcedure>(
-                            new LispProcedure(new LispProcedureSignature(), new[] {(LispExpression) c[0]}),
-                            c.Count > 1
-                                ? new LispProcedure(new LispProcedureSignature(), c.Skip(1).Cast<LispExpression>().ToArray())
-                                : null)).ToArray();
+                    if (ni.Node.Value is LispLet)
+                        return FoldLet(children);
 
-                        return new LispExpression(new LispCond(condBody));
-                    }
 
                     LispExpression e = new LispExpression(ni.Node.Value);
                     e.AddRange(children);
@@ -99,6 +75,75 @@ namespace MiniLisp
                 });
 
             return Eval(foldedLambdas, _mainScope);
+        }
+
+        private LispExpression FoldIf(LispExpression[] children)
+        {
+            if (children.Length < 1)
+                throw new LispIfPartExpectedException("test");
+
+            if (children.Length < 2)
+                throw new LispIfPartExpectedException("then");
+
+            if (children.Length < 3)
+                throw new LispIfPartExpectedException("else");
+
+            if (children.Length > 3)
+                throw new LispIfTooManyPartsException(children.Length);
+
+            return new LispExpression(new LispIf(
+                new LispProcedure(new LispProcedureSignature(), new[] { children[0] }),
+                new LispProcedure(new LispProcedureSignature(), new[] { children[1] }),
+                new LispProcedure(new LispProcedureSignature(), new[] { children[2] })));
+        }
+
+        private LispExpression FoldCond(LispExpression[] children)
+        {
+            if (children.Any(c => !(c.Value is LispGroupElement)) || children.Any(c => c.Children.Count == 0))
+                throw new LispCondTestValueExressionExpectedException();
+
+            KeyValuePair<LispProcedure, LispProcedure>[] condBody = children.Select(c => new KeyValuePair<LispProcedure, LispProcedure>(
+                new LispProcedure(new LispProcedureSignature(), new[] { (LispExpression)c[0] }),
+                c.Count > 1
+                    ? new LispProcedure(new LispProcedureSignature(), c.Skip(1).Cast<LispExpression>().ToArray())
+                    : null)).ToArray();
+
+            return new LispExpression(new LispCond(condBody));
+        }
+
+        private LispExpression FoldLet(LispExpression[] children)
+        {
+            if (children.Length == 0 || !(children[0].Value is LispGroupElement))
+                throw new LispLetPartExpectedException("binding pairs");
+
+            if (children.Length == 1)
+                throw new LispLetPartExpectedException("body");
+
+            LispExpression bindingsPairs = children[0];
+            Func<LispExpression, bool> isIdentifierAndExpression = e => (e.Value is LispGroupElement) && (e.Count == 2) && (e[0].Value is LispIdentifier);
+            LispExpression notIdentifierAndExpression = (LispExpression)bindingsPairs.FirstOrDefault(e => !isIdentifierAndExpression((LispExpression)e));
+            if (notIdentifierAndExpression != null)
+                throw new LispLetIdentifierAndExpressionExpectedException(notIdentifierAndExpression);
+
+            LispIdentifier[] identifiers = bindingsPairs.Select(p => p[0].Value).Cast<LispIdentifier>().ToArray();
+
+            var duplicate = identifiers.GroupBy(e => e.Value).FirstOrDefault(g => g.Count() > 1);
+            if (duplicate != null)
+                throw new LispDuplicateIdentifierDefinitionException(duplicate.Key);
+
+            LispProcedureParameter[] parameters = identifiers.Select(id => new LispProcedureParameter(id.Value, typeof(LispValueElement))).ToArray();
+            LispProcedureSignature procedureSignature = new LispProcedureSignature(parameters);
+            LispExpression[] procedureBody = children.Skip(1).ToArray();
+            LispProcedure procedure = new LispProcedure(procedureSignature, procedureBody);
+
+            LispExpression[] arguments = bindingsPairs.Select(p => (LispExpression)p[1]).ToArray();
+
+            LispExpression procedureCallExpression = new LispExpression(new LispEval())
+            {
+                new LispExpression(procedure)
+            };
+            procedureCallExpression.AddRange(arguments);
+            return procedureCallExpression;
         }
 
         private LispValueElement Eval(LispExpression expression, Scope scope)

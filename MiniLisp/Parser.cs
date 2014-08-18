@@ -67,15 +67,26 @@ namespace MiniLisp
                             case "cond":
                                 lispElement = new LispCond();
                                 break;
+
+                            case "let":
+                                lispElement = new LispLet();
+                                break;
                         }
                     }
 
                     if (lispElement == null)
                     {
-                        LispExpression prevExpr = stack.Count > 0 ? stack.Peek() : null;
-                        bool isLambdaOrDefineGroup = prevExpr != null && prevExpr.Children.Count == 0 && (prevExpr.Value is LispLambda || prevExpr.Value is LispDefine);
+                        LispExpression prevExpr = stack.Count > 0 ? stack.Pop() : null;
+                        LispExpression prevPrevExpr = stack.Count > 0 ? stack.Pop() : null;
+                        if (prevPrevExpr != null)
+                            stack.Push(prevPrevExpr);
+                        if (prevExpr != null)
+                            stack.Push(prevExpr);
+
+                        bool isLambdaOrDefineOrLetGroup = prevExpr != null && prevExpr.Children.Count == 0 && (prevExpr.Value is LispLambda || prevExpr.Value is LispDefine || prevExpr.Value is LispLet);
                         bool isCondGroup = prevExpr != null && prevExpr.Value is LispCond;
-                        lispElement = isLambdaOrDefineGroup || isCondGroup ? (LispExpressionElement)new LispGroupElement() : new LispEval();
+                        bool isLetBindingPairGroup = prevExpr != null && prevPrevExpr != null && prevPrevExpr.Value is LispLet && prevExpr.Value is LispGroupElement;
+                        lispElement = isLambdaOrDefineOrLetGroup || isCondGroup || isLetBindingPairGroup ? (LispExpressionElement)new LispGroupElement() : new LispEval();
                     }
                     else
                     {
