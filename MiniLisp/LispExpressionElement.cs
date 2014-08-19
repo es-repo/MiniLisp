@@ -24,6 +24,7 @@ namespace MiniLisp
                 {typeof(LispSet), "set!"},
                 {typeof(LispIf), "if"},
                 {typeof(LispCond), "cond"},
+                {typeof(LispElse), "else"},
                 {typeof(LispLambda), "lambda"},
                 {typeof(LispLet), "let"},
                 {typeof(LispEval), ""},

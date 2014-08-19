@@ -42,12 +42,16 @@
     <Compile Include="DefaultDefenitions.cs" />
     <Compile Include="Exceptions\LispCondTestValueExressionExpectedException.cs" />
     <Compile Include="Exceptions\LispDuplicateIdentifierDefinitionException.cs" />
+    <Compile Include="Exceptions\LispElseExpressionExpectedException.cs" />
+    <Compile Include="Exceptions\LispElseMustBeLastException.cs" />
     <Compile Include="Exceptions\LispIfPartExpectedException.cs" />
     <Compile Include="Exceptions\LispIfTooManyPartsException.cs" />
     <Compile Include="Exceptions\LispLetIdentifierAndExpressionExpectedException.cs" />
     <Compile Include="Exceptions\LispLetPartExpectedException.cs" />
+    <Compile Include="Exceptions\LispNotAllowedAsExpressionException.cs" />
     <Compile Include="Exceptions\LispProcedureDuplicateParameterException.cs" />
     <Compile Include="Expressions\LispCond.cs" />
+    <Compile Include="Expressions\LispElse.cs" />
     <Compile Include="Expressions\LispIf.cs" />
     <Compile Include="Expressions\LispLet.cs" />
     <Compile Include="Expressions\LispProcedureParameter.cs" />

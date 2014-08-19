@@ -4,7 +4,7 @@
     {
         public TreeNode<T> Node { get; private set; }
 
-        public TreeNode<T> ParentNode { get; private set; }
+        public TreeNodeInfo<T> ParentNodeInfo { get; private set; }
 
         public int IndexAmongSiblings { get; private set; }
 
@@ -14,10 +14,10 @@
             private set;
         }
 
-        public TreeNodeInfo(TreeNode<T> node, TreeNode<T> parentNode, int indexAmongSiblings, int depth)
+        public TreeNodeInfo(TreeNode<T> node, TreeNodeInfo<T> parentNodeInfo, int indexAmongSiblings, int depth)
         {
             Node = node;
-            ParentNode = parentNode;
+            ParentNodeInfo = parentNodeInfo;
             IndexAmongSiblings = indexAmongSiblings;
             Depth = depth;
         }

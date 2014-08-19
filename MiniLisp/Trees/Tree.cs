@@ -34,7 +34,7 @@ namespace MiniLisp.Trees
                     int indexAmongSiblings = vni.NodeInfo.Node.Children.Count - 1;
                     foreach (TreeNode<T> n in vni.NodeInfo.Node.Children.Reverse())
                     {
-                        TreeNodeInfo<T> childNodeInfo = new TreeNodeInfo<T>(n, vni.NodeInfo.Node, indexAmongSiblings, vni.NodeInfo.Depth + 1);
+                        TreeNodeInfo<T> childNodeInfo = new TreeNodeInfo<T>(n, vni.NodeInfo, indexAmongSiblings, vni.NodeInfo.Depth + 1);
                         stack.Push(new TraversedTreeNodeInfo { NodeInfo = childNodeInfo });
                         indexAmongSiblings--;
                     }

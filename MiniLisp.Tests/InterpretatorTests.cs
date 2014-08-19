@@ -127,7 +127,7 @@ d
 (if #t (set! d 5 ) (* 3 4))
 d", "5")]
 
-        [Row(@"(cond (#t) (6))", "#t")]
+        [Row(@"(cond (#t) (6)) (cond (#f 5) (else #f)) (cond (else #f)) (cond (#f))", "#t #f #f")]
 
         [Row(@"(define d 1)
 (cond (#t) (#f 3))

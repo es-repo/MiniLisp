@@ -68,6 +68,8 @@ namespace MiniLisp
                     if (ni.Node.Value is LispLet)
                         return FoldLet(children);
 
+                    if (ni.Node.Value is LispIdentifier && ((LispIdentifier)ni.Node.Value).Value == "else")
+                        return FoldElse(ni);
 
                     LispExpression e = new LispExpression(ni.Node.Value);
                     e.AddRange(children);
@@ -146,6 +148,24 @@ namespace MiniLisp
             return procedureCallExpression;
         }
 
+        private LispExpression FoldElse(TreeNodeInfo<LispExpressionElement> nodeInfo)
+        {
+            if (!(nodeInfo.ParentNodeInfo != null && nodeInfo.ParentNodeInfo.Node.Value is LispGroupElement &&
+                  nodeInfo.ParentNodeInfo.ParentNodeInfo != null &&
+                  nodeInfo.ParentNodeInfo.ParentNodeInfo.Node.Value is LispCond))
+            {
+                throw new LispNotAllowedAsExpressionException("else");
+            }
+
+            if (nodeInfo.ParentNodeInfo.Node.Count == 1)
+                throw new LispExpressionsInElseExpectedException();
+
+            if (nodeInfo.ParentNodeInfo.IndexAmongSiblings != nodeInfo.ParentNodeInfo.ParentNodeInfo.Node.Count - 1)
+                throw new LispElseMustBeLastException();
+
+            return new LispExpression(new LispBoolean(true));
+        }
+
         private LispValueElement Eval(LispExpression expression, Scope scope)
         {
             return Tree<LispExpressionElement>.Fold<LispValueElement>(expression,
@@ -184,8 +204,8 @@ namespace MiniLisp
 
                     if (lispElement is LispIdentifier)
                     {
-                        bool passIdentifer = ni.ParentNode != null && ni.IndexAmongSiblings == 0
-                            && (ni.ParentNode.Value is LispDefine || ni.ParentNode.Value is LispSet);
+                        bool passIdentifer = ni.ParentNodeInfo != null && ni.IndexAmongSiblings == 0
+                            && (ni.ParentNodeInfo.Node.Value is LispDefine || ni.ParentNodeInfo.Node.Value is LispSet);
                         if (!passIdentifer)
                         {
                             LispIdentifier identifier = (LispIdentifier) lispElement;

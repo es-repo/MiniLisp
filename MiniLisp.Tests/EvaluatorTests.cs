@@ -547,6 +547,92 @@ namespace MiniLisp.Tests
                 }
             });
             Assert.AreEqual(3.0, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(false))                    
+                }
+            });
+
+            Assert.IsTrue(evalResult is LispVoid);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispElse()),   
+                    new LispExpression(new LispBoolean(false))                    
+                }
+            });
+
+            Assert.AreEqual(false, evalResult.Value);
+
+            evalResult = evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispBoolean(false)),   
+                    new LispExpression(new LispNumber(5))                    
+                },
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispElse()),   
+                    new LispExpression(new LispNumber(3))                     
+                }
+            });
+
+            Assert.AreEqual(3.0, evalResult.Value);
+        }
+
+        [Test, ExpectedException(typeof(LispNotAllowedAsExpressionException))]
+        public void TestElseAsSingleExpression()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispElse()));
+        }
+
+        [Test, ExpectedException(typeof(LispNotAllowedAsExpressionException))]
+        public void TestElseNonInCond()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispGroupElement())
+            {
+                new LispExpression(new LispElse()),
+                new LispExpression(new LispNumber(5))
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispExpressionsInElseExpectedException))]
+        public void TestElseWihtouExpressions()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispElse())
+                }
+            });
+        }
+
+        [Test, ExpectedException(typeof(LispElseMustBeLastException))]
+        public void TestElseNotLast()
+        {
+            Evaluator evaluator = new Evaluator();
+            evaluator.Eval(new LispExpression(new LispCond())
+            {
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispElse()),
+                    new LispExpression(new LispNil()),
+                },
+                new LispExpression(new LispGroupElement())
+                {
+                    new LispExpression(new LispNil()),
+                }
+            });
         }
 
         [Test]
