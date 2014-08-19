@@ -84,6 +84,12 @@ namespace MiniLisp
                 {
                     new LispProcedureParameter("", typeof(LispPair))
                 }), Cdr));
+
+            scope.Add("list", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispValueElement)), List));
+
+            scope.Add("void", new LispBuiltInProcedure(
+                new LispProcedureSignature(null, typeof(LispValueElement)), args => new LispVoid()));
         }
 
         private LispValueElement Sum(LispValueElement[] arguments)
@@ -181,6 +187,11 @@ namespace MiniLisp
         private LispValueElement Cdr(LispValueElement[] arguments)
         {
             return ((LispPair)arguments[0]).Value.Value;
+        }
+
+        private LispPair List(LispValueElement[] arguments)
+        {
+            return arguments.Reverse().Aggregate(((LispPair)new LispNull()), (r, e) => new LispPair(e, r));
         }
     }
 }

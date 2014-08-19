@@ -114,9 +114,9 @@ namespace MiniLisp
                     lispElement = new LispExpressionValue(expression);
                     i = exprObjEnd - 1;
                 }
-                else if (t == "nil")
+                else if (t == "nil" || t == "null")
                 {
-                    lispElement = new LispNil();
+                    lispElement = new LispNull();
                 }
                 else if (IsBoolean(t, out boolValue))
                 {

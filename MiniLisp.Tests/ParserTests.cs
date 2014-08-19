@@ -21,7 +21,7 @@ namespace MiniLisp.Tests
         [Test]
         [Row("", "")]
         [Row("5", "5")]
-        [Row("5 false 3 nil #t define id \"\" \"ab c\" \"(+ 2 3)\"", "5 #f 3 nil #t define id \"\" \"ab c\" \"(+ 2 3)\"")]
+        [Row("5 false 3 nil null #t define id \"\" \"ab c\" \"(+ 2 3)\"", "5 #f 3 () () #t define id \"\" \"ab c\" \"(+ 2 3)\"")]
         [Row("()", "()")]
         [Row("(+ 3 2)", "(+ 3 2)")]
         [Row("(+ 3 (* 2 5))", "(+ 3 (* 2 5))")]

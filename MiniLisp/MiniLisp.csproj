@@ -77,7 +77,7 @@
     <Compile Include="Expressions\LispProcedureSignature.cs" />
     <Compile Include="Expressions\LispValueElement.cs" />
     <Compile Include="Expressions\LispVoid.cs" />
-    <Compile Include="Expressions\LispNil.cs" />
+    <Compile Include="Expressions\LispNull.cs" />
     <Compile Include="Expressions\LispBoolean.cs" />
     <Compile Include="Expressions\LispNumber.cs" />
     <Compile Include="Expressions\LispPair.cs" />

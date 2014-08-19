@@ -626,11 +626,11 @@ namespace MiniLisp.Tests
                 new LispExpression(new LispGroupElement())
                 {
                     new LispExpression(new LispElse()),
-                    new LispExpression(new LispNil()),
+                    new LispExpression(new LispNull()),
                 },
                 new LispExpression(new LispGroupElement())
                 {
-                    new LispExpression(new LispNil()),
+                    new LispExpression(new LispNull()),
                 }
             });
         }

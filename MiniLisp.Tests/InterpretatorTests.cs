@@ -145,6 +145,14 @@ d", "#t 7 5 11")]
           (y x))
       (cons y x)))", "(5 . 2)")]
 
+        [Row(@"(define (hanoi-tower n f t s)
+  (cond ((< n 1) null)
+        ((cons (hanoi-tower (- n 1) f s t)
+         (cons (cons f t)
+         (hanoi-tower (- n 1) s t f))))))
+
+(hanoi-tower 3 1 2 3)", "(((() (1 . 2)) (1 . 3) () (2 . 3)) (1 . 2) (() (3 . 1)) (3 . 2) () (1 . 2))")]
+
         public void Test(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
@@ -168,6 +176,8 @@ d", "#t 7 5 11")]
         [Row("(and #f) (and #t) (and true true false) (and true true)", "#f #t #f #t")]
         [Row("(equal? 1 1) (equal? \"ab\" \"ab\") (equal? 2 1) (equal? #t 1)", "#t #t #f #f")]
         [Row("(cons (cons 1 2) 3) (car (cons (cons 1 2) 3)) (cdr (cons 2 3))", "((1 . 2) . 3) (1 . 2) 3")]
+        [Row("(list) (list 1) (car (list 1 2 3)) (cdr (list 1 2 3))", "() (1) 1 (2 3)")]
+        [Row("(void) (void 1 2)", "")]
         public void TestDefaults(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
@@ -180,6 +190,9 @@ d", "#t 7 5 11")]
         [Row("(fact 7)", "5040")]
         [Row("(define p (cons 1 2)) (car p) (cdr p)", "1 2")]
         [Row("(sqrt 81)", "9.00001129879022")]
+        [Row("(define d null) (define e 5) (null? d) (null? e)", "#t #f")]
+        [Row("(map - (list 1 2 3 4))", "(-1 -2 -3 -4)")]
+        [Row("(define sum 0) (for-each (lambda(a) (set! sum (+ sum a))) (list 1 2 3)) sum", "6")]
         public void TestStdLib(string input, string expectedOutput)
         {
             Interpretator interpretator = new Interpretator();
