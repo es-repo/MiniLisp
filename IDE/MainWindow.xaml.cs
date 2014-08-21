@@ -18,8 +18,8 @@ namespace IDE
 
             TextRange inputText = new TextRange(_inputTextBox.Document.ContentStart, _inputTextBox.Document.ContentEnd);
             inputText.Text =
-@"(define (solve-hanoi-towers n)
-  (let((steps 0))
+@"(define (solve-hanoi-tower n)
+  (let ((steps 0))
     (define (move n f t s)
       (cond ((= n 0) null)
             (else
@@ -30,7 +30,7 @@ namespace IDE
               (move (- n 1) s t f)))))
     (cons (move n 1 3 2) steps)))
 
-(define r (solve-hanoi-towers 3)) 
+(define r (solve-hanoi-tower 3)) 
 (list 'Steps: (cdr r))
 (list 'Path: (car r))";
         }
