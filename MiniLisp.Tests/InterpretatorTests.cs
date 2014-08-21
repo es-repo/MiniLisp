@@ -145,13 +145,19 @@ d", "#t 7 5 11")]
           (y x))
       (cons y x)))", "(5 . 2)")]
 
-        [Row(@"(define (hanoi-tower n f t s)
-  (cond ((< n 1) null)
-        ((cons (hanoi-tower (- n 1) f s t)
-         (cons (cons f t)
-         (hanoi-tower (- n 1) s t f))))))
+        [Row(@"
+(define (solve-hanoi-tower n)
+  (let ((path null)) 
+    (define (move n f t s)
+      (cond ((< n 1) null)
+            ((move (- n 1) f s t) 
+             (set! path (list path f '=> t)) 
+             (move (- n 1) s t f)))
+      )
+    (move  n 1 3 2)
+    path))
 
-(hanoi-tower 3 1 2 3)", "(((() (1 . 2)) (1 . 3) () (2 . 3)) (1 . 2) (() (3 . 1)) (3 . 2) () (1 . 2))")]
+(solve-hanoi-tower 3)", "(((((((() 1 => 3) 1 => 2) 3 => 2) 1 => 3) 2 => 1) 2 => 3) 1 => 3)")]
 
         public void Test(string input, string expectedOutput)
         {

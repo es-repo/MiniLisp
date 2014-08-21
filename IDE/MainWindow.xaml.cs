@@ -15,6 +15,19 @@ namespace IDE
         public MainWindow()
         {
             InitializeComponent();
+
+            TextRange inputText = new TextRange(_inputTextBox.Document.ContentStart, _inputTextBox.Document.ContentEnd);
+            inputText.Text =
+@"(define (solve-hanoi-tower n)
+  (define (move n f t s)     
+    (cond ((= n 0) null)
+        ((list
+          (move (- n 1) f s t)          
+          (list f '=> t)
+          (move (- n 1) s t f)))))
+  (move n 1 3 2))
+
+(solve-hanoi-tower 3)";
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)

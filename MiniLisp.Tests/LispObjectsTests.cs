@@ -22,7 +22,7 @@ namespace MiniLisp.Tests
             Assert.AreEqual("id", new LispIdentifier("id").ToString());
 
             Assert.AreEqual("'()", new LispExpressionValue(new LispExpression(new LispEval())).ToString());
-            Assert.AreEqual("'5", new LispExpressionValue(new LispExpression(new LispNumber(5))).ToString());
+            Assert.AreEqual("5", new LispExpressionValue(new LispExpression(new LispNumber(5))).ToString());
 
             Assert.AreEqual("'(1)", new LispExpressionValue(new LispExpression(new LispEval())
             {
