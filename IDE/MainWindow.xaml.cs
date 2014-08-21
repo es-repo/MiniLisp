@@ -19,15 +19,20 @@ namespace IDE
             TextRange inputText = new TextRange(_inputTextBox.Document.ContentStart, _inputTextBox.Document.ContentEnd);
             inputText.Text =
 @"(define (solve-hanoi-towers n)
-  (define (move n f t s)     
-    (cond ((= n 0) null)
-        ((list
-          (move (- n 1) f s t)          
-          (list f '=> t)
-          (move (- n 1) s t f)))))
-  (move n 1 3 2))
+  (let((steps 0))
+    (define (move n f t s)
+      (cond ((= n 0) null)
+            (else
+             (set! steps (+ 1 steps))            
+             (list
+              (move (- n 1) f s t)
+              (list f '=> t)              
+              (move (- n 1) s t f)))))
+    (cons (move n 1 3 2) steps)))
 
-(solve-hanoi-towers 3)";
+(define r (solve-hanoi-towers 3)) 
+(list 'Steps: (cdr r))
+(list 'Path: (car r))";
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
