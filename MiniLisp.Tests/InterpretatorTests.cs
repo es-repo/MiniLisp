@@ -146,7 +146,7 @@ d", "#t 7 5 11")]
       (cons y x)))", "(5 . 2)")]
 
         [Row(@"
-(define (solve-hanoi-tower n)
+(define (solve-hanoi-towers n)
   (let ((path null)) 
     (define (move n f t s)
       (cond ((< n 1) null)
@@ -157,7 +157,7 @@ d", "#t 7 5 11")]
     (move  n 1 3 2)
     path))
 
-(solve-hanoi-tower 3)", "(((((((() 1 => 3) 1 => 2) 3 => 2) 1 => 3) 2 => 1) 2 => 3) 1 => 3)")]
+(solve-hanoi-towers 3)", "(((((((() 1 => 3) 1 => 2) 3 => 2) 1 => 3) 2 => 1) 2 => 3) 1 => 3)")]
 
         public void Test(string input, string expectedOutput)
         {
